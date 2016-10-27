@@ -9,7 +9,7 @@ using d = DocumentFormat.OpenXml.Drawing;
 using dc = DocumentFormat.OpenXml.Drawing.Charts;
 using dw = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 
-namespace KIID.it.valuelab.hedgeinvest.KIID
+namespace it.valuelab.hedgeinvest.KIID
 {
     class CreateKIIDOpenXML
     {

@@ -71,7 +71,7 @@
     <Compile Include="it\valuelab\hedgeinvest\KIID\CreateKIID.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\CreateKIIDOpenXML.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\model\KIIDData.cs" />
-    <Compile Include="it\valuelab\hedgeinvest\KIID\service\helpers\ExcelHelper.cs" />
+    <Compile Include="it\valuelab\hedgeinvest\helpers\ExcelHelper.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\service\KIIDService.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

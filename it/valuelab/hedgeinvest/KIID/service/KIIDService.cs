@@ -1,13 +1,13 @@
-﻿using m = KIID.it.valuelab.hedgeinvest.KIID.model;
+﻿using m = it.valuelab.hedgeinvest.KIID.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using KIID.it.valuelab.hedgeinvest.KIID.service.helpers;
+using it.valuelab.hedgeinvest.helpers;
 
-namespace KIID.it.valuelab.hedgeinvest.KIID.service
+namespace it.valuelab.hedgeinvest.KIID.service
 {
     public class KIIDService
     {

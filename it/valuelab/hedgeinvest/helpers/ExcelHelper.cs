@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KIID.it.valuelab.hedgeinvest.KIID.service.helpers
+namespace it.valuelab.hedgeinvest.helpers
 {
     class ExcelHelper : IDisposable
     {

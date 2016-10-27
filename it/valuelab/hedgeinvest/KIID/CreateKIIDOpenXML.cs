@@ -2,7 +2,7 @@
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using s = KIID.it.valuelab.hedgeinvest.KIID.service;
+using s = it.valuelab.hedgeinvest.KIID.service;
 using System.Diagnostics;
 using System.IO;
 using d = DocumentFormat.OpenXml.Drawing;

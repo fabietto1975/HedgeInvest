@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace KIID.it.valuelab.hedgeinvest.KIID.model
+namespace it.valuelab.hedgeinvest.KIID.model
 {
 
     public sealed class KIIDData

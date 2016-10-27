@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace KIID.it.valuelab.hedgeinvest.KIID
+namespace it.valuelab.hedgeinvest.KIID
 {
     class CreateKIID
     {

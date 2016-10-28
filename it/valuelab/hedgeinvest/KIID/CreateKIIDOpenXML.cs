@@ -8,6 +8,8 @@ using System.IO;
 using d = DocumentFormat.OpenXml.Drawing;
 using dc = DocumentFormat.OpenXml.Drawing.Charts;
 using dw = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using m = it.valuelab.hedgeinvest.KIID.model;
+using System.Collections.Generic;
 
 namespace it.valuelab.hedgeinvest.KIID
 {
@@ -16,46 +18,13 @@ namespace it.valuelab.hedgeinvest.KIID
         static void Main()
         {
             s.KIIDService service = new s.KIIDService();
-            service.readFundsData();
+            List<m.KIIDData> kiidDataList = service.readFundsData();
 
-            /*
-            string template = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\DOC\TEMPLATE\TEMPLATE.docx";
-            string outName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\DOC\OUT\OUT.docx";
-
-            byte[] byteArray = File.ReadAllBytes(template);
-            using (MemoryStream stream = new MemoryStream())
+            foreach (m.KIIDData kiiddata in kiidDataList)
             {
-                stream.Write(byteArray, 0, (int)byteArray.Length);
-                using (WordprocessingDocument wordDocument =
-                    WordprocessingDocument.Open(stream, true)) 
-                {
-                    Body body = wordDocument.MainDocumentPart.Document.Body;
-
-                    ChartPart chartPart = wordDocument.MainDocumentPart.AddNewPart<ChartPart>("fundPerformance");
-
-                    dc.BarChart barChart = new dc.BarChart();
-
-                    Drawing dr = new Drawing();
-                    dw.Inline inline = new dw.Inline();
-                    dw.Extent extent = new dw.Extent();
-                    extent.Cx = 10000;
-                    extent.Cy = 2342342;
-                    inline.Extent = extent;
-                    dr.Inline = inline;
-
-                    d.Graphic g = new d.Graphic();
-                    d.GraphicData gd = new d.GraphicData();
-                    inline.Graphic = g;
-
-
-                }
-
-                File.WriteAllBytes(outName, stream.ToArray());
+                service.generateOutput(kiiddata);
             }
-
-            // Open in Word:
-            Process.Start("WINWORD.EXE", outName);
-            */
+            
 
         }
     }

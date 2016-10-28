@@ -22,10 +22,12 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 //Performance
                 int row = 2;
-                string  isin = excelHelper.GetValue(performanceSheetname, "A", row.ToString());
+                
                 Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
+                string isin = excelHelper.GetValue(performanceSheetname, "A", row.ToString());
                 while (!isin.Equals(""))
                 {
+
                     string anno = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                     string dato = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
 
@@ -46,14 +48,14 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string classe = excelHelper.GetValue(mainSheetname, "A", row.ToString());
                 while (!classe.Equals(""))
                 {
-                    row++;
-                    string currentIsin = excelHelper.GetValue(mainSheetname, "C", row.ToString());
+                    string currentIsin = excelHelper.GetValue(mainSheetname, "B", row.ToString());
+                    System.Diagnostics.Debug.WriteLine("currentIsin:" + currentIsin);
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(isin, out performances);
                     m.KIIDData item = new m.KIIDData(
                         classe,
-                        excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         currentIsin,
+                        excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "D", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "E", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "F", row.ToString()),
@@ -68,10 +70,28 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         );
                     result.Add(item);
                     classe = excelHelper.GetValue(mainSheetname, "A", row.ToString());
+                    row++;
                 }
 
             }
             return result;
+        }
+
+        public void generateOutput(m.KIIDData data)
+        {
+            const string outPath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT"; //TODO: esternalizzare property
+            const string templatePath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE"; //TODO: esternalizzare property
+
+            string inputFileName = templatePath+"\\" +data.Classe + ".docx"; ;
+            string outputFileName = outPath + "\\" + data.Classe + "_" + data.Isin+ ".docx";
+            System.Diagnostics.Debug.WriteLine(inputFileName);
+            System.Diagnostics.Debug.WriteLine(outputFileName);
+            using (WordHelper wordHelper = new WordHelper(inputFileName, outputFileName))
+            {
+                wordHelper.replaceText("@CLASSE@", data.Classe);
+                wordHelper.replaceText("@ISIN@", data.Isin);
+            }
+
         }
 
     }

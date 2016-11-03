@@ -28,7 +28,7 @@ namespace it.valuelab.hedgeinvest.helpers
             if (currentCell != null)
             {
                 value = currentCell.InnerText;
-                
+
                 if ((currentCell.DataType != null) && (currentCell.DataType == CellValues.SharedString))
                 {
                     value = excelData.SharedStringTablePart.SharedStringTable

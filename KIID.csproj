@@ -71,6 +71,7 @@
     <Compile Include="it\valuelab\hedgeinvest\helpers\WordHelper.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\CreateKIID.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\CreateKIIDOpenXML.cs" />
+    <Compile Include="it\valuelab\hedgeinvest\KIID\helpers\KIIDWordHelper.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\model\KIIDData.cs" />
     <Compile Include="it\valuelab\hedgeinvest\helpers\ExcelHelper.cs" />
     <Compile Include="it\valuelab\hedgeinvest\KIID\service\KIIDService.cs" />

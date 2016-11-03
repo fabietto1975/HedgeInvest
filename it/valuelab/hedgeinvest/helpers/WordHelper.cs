@@ -10,7 +10,7 @@ namespace it.valuelab.hedgeinvest.helpers
     class WordHelper : IDisposable
     {
 
-        private WordprocessingDocument Document { get; }
+        protected WordprocessingDocument Document { get; }
 
         public WordHelper(String filename)
         {
@@ -34,12 +34,13 @@ namespace it.valuelab.hedgeinvest.helpers
 
             Regex regexText = new Regex(oldtext);
             docText = regexText.Replace(docText, newtext);
-            System.Diagnostics.Debug.WriteLine(docText);
             using (StreamWriter sw = new StreamWriter(Document.MainDocumentPart.GetStream(FileMode.Create)))
             {
                 sw.Write(docText);
             }
         }
+
+
 
         public void Dispose()
         {

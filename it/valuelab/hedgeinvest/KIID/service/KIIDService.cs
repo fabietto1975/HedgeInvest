@@ -6,6 +6,7 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using it.valuelab.hedgeinvest.helpers;
+using KIID.it.valuelab.hedgeinvest.KIID.helpers;
 
 namespace it.valuelab.hedgeinvest.KIID.service
 {
@@ -21,11 +22,12 @@ namespace it.valuelab.hedgeinvest.KIID.service
             using (ExcelHelper excelHelper = new ExcelHelper(inputFileName))
             {
                 //Performance
+
                 int row = 2;
                 
                 Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
                 string isin = excelHelper.GetValue(performanceSheetname, "A", row.ToString());
-                while (!isin.Equals(""))
+                while (!string.IsNullOrEmpty(isin))
                 {
 
                     string anno = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
@@ -44,33 +46,34 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 }
 
                 //Dati Fondo
-                row = 2;
-                string classe = excelHelper.GetValue(mainSheetname, "A", row.ToString());
-                while (!classe.Equals(""))
+                row = 3;
+                string classe = excelHelper.GetValue(mainSheetname, "C", row.ToString());
+                while (!string.IsNullOrEmpty(classe))
                 {
-                    string currentIsin = excelHelper.GetValue(mainSheetname, "B", row.ToString());
-                    System.Diagnostics.Debug.WriteLine("currentIsin:" + currentIsin);
+                    string currentIsin = excelHelper.GetValue(mainSheetname, "D", row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(isin, out performances);
                     m.KIIDData item = new m.KIIDData(
+                        excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         classe,
                         currentIsin,
-                        excelHelper.GetValue(mainSheetname, "B", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "D", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "E", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "F", row.ToString()),
+                        excelHelper.GetValue(mainSheetname, "G", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "H", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "I", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "J", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "K", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "L", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "M", row.ToString()),
                         excelHelper.GetValue(mainSheetname, "N", row.ToString()),
+                        excelHelper.GetValue(mainSheetname, "O", row.ToString()),
+                        excelHelper.GetValue(mainSheetname, "P", row.ToString()),
                         performances
                         );
                     result.Add(item);
-                    classe = excelHelper.GetValue(mainSheetname, "A", row.ToString());
                     row++;
+                    classe = excelHelper.GetValue(mainSheetname, "C", row.ToString());
+                    
                 }
 
             }
@@ -82,14 +85,16 @@ namespace it.valuelab.hedgeinvest.KIID.service
             const string outPath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT"; //TODO: esternalizzare property
             const string templatePath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE"; //TODO: esternalizzare property
 
-            string inputFileName = templatePath+"\\" +data.Classe + ".docx"; ;
-            string outputFileName = outPath + "\\" + data.Classe + "_" + data.Isin+ ".docx";
-            System.Diagnostics.Debug.WriteLine(inputFileName);
-            System.Diagnostics.Debug.WriteLine(outputFileName);
-            using (WordHelper wordHelper = new WordHelper(inputFileName, outputFileName))
+            string inputFileName = templatePath+"\\" +data.Template + ".docx"; ;
+            string outputFileName = outPath + "\\" + data.Template + "_" + data.Isin+ ".docx";
+            using (KIIDWordHelper wordHelper = new KIIDWordHelper(inputFileName, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
+                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
+                wordHelper.replaceText("@TESTO1@", data.Testo1);
+
+                wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
             }
 
         }

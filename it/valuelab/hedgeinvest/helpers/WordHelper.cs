@@ -42,8 +42,6 @@ namespace it.valuelab.hedgeinvest.helpers
             }
         }
 
-
-
         public void Dispose()
         {
             Document.Dispose();

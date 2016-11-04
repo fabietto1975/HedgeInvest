@@ -19,7 +19,7 @@ namespace it.valuelab.hedgeinvest.KIID
         {
             s.KIIDService service = new s.KIIDService();
             List<m.KIIDData> kiidDataList = service.readFundsData();
-
+            //Prova commit
             foreach (m.KIIDData kiiddata in kiidDataList)
             {
                 service.generateOutput(kiiddata);

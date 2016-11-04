@@ -45,16 +45,6 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                 Drawing d = cell.Elements<Paragraph>().ElementAt(0).Elements<Run>().ElementAt(0).Elements<Drawing>().ElementAt(0);
                 System.Diagnostics.Debug.WriteLine(d.InnerText);
                 Inline inline = d.Inline;
-                    /*
-                    foreach (Inline dr in cell.Elements<Inline>())
-                    {
-                        System.Diagnostics.Debug.WriteLine(dr.InnerText);
-                    }
-                    foreach (Drawing dr in cell.Elements<Drawing>())
-                    {
-                        System.Diagnostics.Debug.WriteLine(dr.InnerText);
-                    }
-                    */
             }
         }
     }

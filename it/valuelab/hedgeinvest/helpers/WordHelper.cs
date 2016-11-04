@@ -12,7 +12,7 @@ namespace it.valuelab.hedgeinvest.helpers
 
         protected WordprocessingDocument _document;
         protected WordprocessingDocument Document { get { return _document; } }
-        
+        // test modifica
 
         public WordHelper(String filename)
         {

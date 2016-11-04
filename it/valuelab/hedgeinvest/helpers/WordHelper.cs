@@ -10,17 +10,19 @@ namespace it.valuelab.hedgeinvest.helpers
     class WordHelper : IDisposable
     {
 
-        protected WordprocessingDocument Document { get; }
+        protected WordprocessingDocument _document;
+        protected WordprocessingDocument Document { get { return _document; } }
+        
 
         public WordHelper(String filename)
         {
-            Document = WordprocessingDocument.Open(filename, false);
+            _document = WordprocessingDocument.Open(filename, false);
         }
 
         public WordHelper(String filename, String outName)
         {
             File.Copy(filename, outName, true);
-            Document = WordprocessingDocument.Open(outName, true);
+            _document = WordprocessingDocument.Open(outName, true);
         }
 
         public void replaceText(string oldtext, string newtext)

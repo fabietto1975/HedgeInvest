@@ -14,6 +14,7 @@ namespace it.valuelab.hedgeinvest.helpers
         public ExcelHelper(String filename)
         {
             excelData = new ExcelDocumentData(SpreadsheetDocument.Open(filename, false));
+
         }
 
         public String GetValue(String sheet, String col, String row)
@@ -27,8 +28,14 @@ namespace it.valuelab.hedgeinvest.helpers
             string value = "";
             if (currentCell != null)
             {
-                value = currentCell.InnerText;
-
+                if (currentCell.CellValue != null)
+                {
+                    value = currentCell.CellValue.InnerText;
+                }
+                else
+                {
+                    value = currentCell.InnerText;
+                }
                 if ((currentCell.DataType != null) && (currentCell.DataType == CellValues.SharedString))
                 {
                     value = excelData.SharedStringTablePart.SharedStringTable
@@ -59,6 +66,7 @@ namespace it.valuelab.hedgeinvest.helpers
             {
                 worksheets.Add(s.Name, (WorksheetPart)Document.WorkbookPart.GetPartById(s.Id));
             }
+
         }
 
         public WorksheetPart GetWorksheetPartByName(string name)

@@ -3,6 +3,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using it.valuelab.hedgeinvest.helpers;
 using System;
+using System.Collections.Generic;
+using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 
 namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 {
@@ -15,7 +17,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
         {
             foreach (Table t in Document.MainDocumentPart.Document.Body.Elements<Table>())
             {
-                TableRow row = t.Elements<TableRow>().ElementAt(4);
+                TableRow row = t.Elements<TableRow>().ElementAt(4); //Sezione "Profilo di rischio e di rendimento"
                 foreach (TableCell cell in row.Elements<TableCell>())
                 {
                     foreach (Table innerTable in cell.Elements<Table>())
@@ -28,13 +30,32 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                                 innerCell.TableCellProperties.Shading.Fill= "CC9900";
                             }
                         }
-
                     }
-
                 }    
             }
         }
+
+        public void InsertPerformanceTable(SortedDictionary<string, string> performances)
+        {
+            foreach (Table t in Document.MainDocumentPart.Document.Body.Elements<Table>())
+            {
+                TableRow row = t.Elements<TableRow>().ElementAt(9);//Sezione "Risultati ottenuti nel passato"
+                TableCell cell = row.Elements<TableCell>().ElementAt(0);
+
+                Drawing d = cell.Elements<Paragraph>().ElementAt(0).Elements<Run>().ElementAt(0).Elements<Drawing>().ElementAt(0);
+                System.Diagnostics.Debug.WriteLine(d.InnerText);
+                Inline inline = d.Inline;
+                    /*
+                    foreach (Inline dr in cell.Elements<Inline>())
+                    {
+                        System.Diagnostics.Debug.WriteLine(dr.InnerText);
+                    }
+                    foreach (Drawing dr in cell.Elements<Drawing>())
+                    {
+                        System.Diagnostics.Debug.WriteLine(dr.InnerText);
+                    }
+                    */
+            }
+        }
     }
-
-
 }

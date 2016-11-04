@@ -24,25 +24,21 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 //Performance
 
                 int row = 2;
-                
                 Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
-                string isin = excelHelper.GetValue(performanceSheetname, "A", row.ToString());
+                string isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 while (!string.IsNullOrEmpty(isin))
                 {
-
-                    string anno = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
-                    string dato = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
-
+                    string anno = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
+                    string dato = excelHelper.GetValue(performanceSheetname, "D", row.ToString());
                     SortedDictionary<string, string> isinPerformanceAnno; 
                     if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
                     {
                         isinPerformanceAnno = new SortedDictionary<string, string>();
                     }
                     isinPerformanceAnno[anno] = dato;
-
                     isinPerformanceAnnoMap[isin] =  isinPerformanceAnno;
                     row++;
-                    isin = excelHelper.GetValue(performanceSheetname, "A", row.ToString());
+                    isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
 
                 //Dati Fondo
@@ -52,7 +48,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 {
                     string currentIsin = excelHelper.GetValue(mainSheetname, "D", row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
-                    isinPerformanceAnnoMap.TryGetValue(isin, out performances);
+                    isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
                     m.KIIDData item = new m.KIIDData(
                         excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         classe,
@@ -92,9 +88,15 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
                 wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
-                wordHelper.replaceText("@TESTO1@", data.Testo1);
-
+                //wordHelper.replaceText("@TESTO1@", data.Testo1);
+                System.Diagnostics.Debug.WriteLine(data.Testo1);
+                wordHelper.replaceText("@TESTO1@", "\t\u2022 Riga 1 \u000a\u000d\u2022 Riga 2");
+                //wordHelper.replaceText("@GRAFICO@", "AA");
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
+                if (data.Performances != null)
+                {
+                    wordHelper.InsertPerformanceTable(data.Performances);
+                }
             }
 
         }

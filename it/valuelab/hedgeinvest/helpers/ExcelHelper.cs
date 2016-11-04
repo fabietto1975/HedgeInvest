@@ -57,14 +57,15 @@ namespace it.valuelab.hedgeinvest.helpers
     internal class ExcelDocumentData
     {
         private Dictionary<string, WorksheetPart> worksheets = new Dictionary<string, WorksheetPart>();
-        private SpreadsheetDocument Document { get; }
 
-        public ExcelDocumentData(SpreadsheetDocument _document)
+        private SpreadsheetDocument _document;
+
+        public ExcelDocumentData(SpreadsheetDocument document)
         {
-            Document = _document;
-            foreach (Sheet s in Document.WorkbookPart.Workbook.Descendants<Sheet>())
+            _document = document;
+            foreach (Sheet s in _document.WorkbookPart.Workbook.Descendants<Sheet>())
             {
-                worksheets.Add(s.Name, (WorksheetPart)Document.WorkbookPart.GetPartById(s.Id));
+                worksheets.Add(s.Name, (WorksheetPart)_document.WorkbookPart.GetPartById(s.Id));
             }
 
         }
@@ -86,13 +87,13 @@ namespace it.valuelab.hedgeinvest.helpers
         {
             get 
             {
-                return Document.WorkbookPart.SharedStringTablePart;
+                return _document.WorkbookPart.SharedStringTablePart;
             }
         }
 
         public void Dispose()
         {
-            Document.Dispose();
+            _document.Dispose();
         }
     }
 }

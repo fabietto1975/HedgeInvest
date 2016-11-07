@@ -89,14 +89,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@ISIN@", data.Isin);
                 wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
-                System.Diagnostics.Debug.WriteLine(data.Testo1);
                 //wordHelper.replaceText("@TESTO1@", "\t\u2022 Riga 1 \u000a\u000d\u2022 Riga 2");
                 //wordHelper.replaceText("@GRAFICO@", "AA");
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
-                if (data.Performances != null)
-                {
-                    wordHelper.InsertPerformanceTable(data.Performances);
-                }
+                wordHelper.EditPerformanceTable(data.Performances);
             }
 
         }

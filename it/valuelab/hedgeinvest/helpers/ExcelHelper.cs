@@ -46,6 +46,24 @@ namespace it.valuelab.hedgeinvest.helpers
             }
             return value;
         }
+
+        public Cell GetCellByContent(string sheet, string content, int rowindex)
+        {
+            WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);
+            SheetData sd = currentSheet.Worksheet.Elements<SheetData>().FirstOrDefault();
+            Row row = sd.Elements<Row>().ElementAt(rowindex);
+            foreach(Cell c in row.Elements<Cell>())
+            {
+                if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                    System.Diagnostics.Debug.WriteLine(excelData.SharedStringTablePart.SharedStringTable
+                    .ChildElements[int.Parse(c.InnerText)]
+                    .InnerText);
+            }
+            Cell result = row.Elements<Cell>().Where(
+                c => c.CellValue.Text == content
+                ).FirstOrDefault();
+            return result;
+        }
         
         public void Dispose()
         {

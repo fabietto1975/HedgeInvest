@@ -16,9 +16,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private string datafile;
         private string outputfolder;
         private string language;
-        private string datagenerazione;
+        private DateTime datagenerazione;
 
-        public KIIDService(string _template, string _datafile, string _outputfolder, string _language, string _datagenerazione)
+        public KIIDService(string _template, string _datafile, string _outputfolder, string _language, DateTime _datagenerazione)
         {
             template = _template;
             datafile = _datafile;
@@ -95,7 +95,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         public void generateOutput(m.KIIDData data)
         {
-
+            //Nome file--> nome fondo desunto dal template
             string outputFileName = outputfolder + "\\" + data.Isin+ ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {

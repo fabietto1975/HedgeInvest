@@ -113,18 +113,18 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public void generateOutput(m.KIIDData data)
         {
             //Nome file--> nome fondo desunto dal template
-            string outputFileName = outputfolder + "\\" + data.Isin+ ".docx";
+            string templateName =  template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
+            string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID "+ data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language +".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
                 wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
-                //wordHelper.replaceText("@TESTO1@", "\t\u2022 Riga 1 \u000a\u000d\u2022 Riga 2");
-                //wordHelper.replaceText("@GRAFICO@", "AA");
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceTable(data.Performances);
             }
+
 
         }
 

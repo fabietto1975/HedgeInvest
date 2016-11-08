@@ -4,7 +4,6 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using it.valuelab.hedgeinvest.helpers;
 using System;
 using System.Collections.Generic;
-using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using System.Globalization;
 using System.IO;
@@ -19,12 +18,12 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 
         public void InsertProfiloRischio(string profiloRischio)
         {
-            foreach (DocumentFormat.OpenXml.Drawing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Drawing.Table>())
+            foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
             {
                 TableRow row = t.Elements<TableRow>().ElementAt(4); //Sezione "Profilo di rischio e di rendimento"
                 foreach (TableCell cell in row.Elements<TableCell>())
                 {
-                    foreach (DocumentFormat.OpenXml.Drawing.Table innerTable in cell.Elements<DocumentFormat.OpenXml.Drawing.Table>())
+                    foreach (DocumentFormat.OpenXml.Wordprocessing.Table innerTable in cell.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
                     {
                         TableRow innerRow = innerTable.Elements<TableRow>().ElementAt(0);
                         foreach (TableCell innerCell in innerRow.Elements<TableCell>())

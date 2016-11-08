@@ -39,13 +39,6 @@ namespace it.valuelab.hedgeinvest.helpers
             WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);
             SheetData sd = currentSheet.Worksheet.Elements<SheetData>().FirstOrDefault();
             Row row = sd.Elements<Row>().ElementAt(rowindex);
-            
-            foreach(Cell c in row.Elements<Cell>())
-            {
-                if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
-                    System.Diagnostics.Debug.WriteLine(GetCellText(c));
-            }
-            
             Cell result = row.Elements<Cell>().Where(
                 c =>  content.Equals(GetCellText(c))
                 ).FirstOrDefault();

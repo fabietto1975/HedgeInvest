@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using it.valuelab.hedgeinvest.helpers;
 using KIID.it.valuelab.hedgeinvest.KIID.helpers;
+using System.Globalization;
 
 namespace it.valuelab.hedgeinvest.KIID.service
 {
@@ -30,7 +31,6 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public List<m.KIIDData> readFundsData()
 
         {
-            //string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
             List<m.KIIDData> result = new List<m.KIIDData>();
@@ -74,7 +74,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-
+                string datagenerazioneStr = datagenerazione.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture); //TODO: mese in formato testo, gestire locale
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -97,6 +97,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()),
                         excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
                         excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
+                        datagenerazioneStr,
                         performances
                         );
                     result.Add(item);

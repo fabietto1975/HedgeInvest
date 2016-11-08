@@ -96,7 +96,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public void generateOutput(m.KIIDData data)
         {
 
-            string outputFileName = outputfolder + "\\"  + "_" + data.Isin+ ".docx";
+            string outputFileName = outputfolder + "\\" + data.Isin+ ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);

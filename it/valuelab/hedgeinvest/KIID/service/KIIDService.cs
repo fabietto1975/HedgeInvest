@@ -93,8 +93,6 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         public void generateOutput(m.KIIDData data)
         {
-            string outPath = outputfolder;
-            string templatePath = template;
 
             string outputFileName = outputfolder + "\\"  + "_" + data.Isin+ ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))

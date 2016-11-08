@@ -2,7 +2,9 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
+using System.Text;
 
 namespace it.valuelab.hedgeinvest.helpers
 {
@@ -46,7 +48,49 @@ namespace it.valuelab.hedgeinvest.helpers
             }
             return value;
         }
-        
+
+        /// <summary>
+        /// This event scans through the file to check if there is any files embedded in it.
+        /// If there is any, it will add the name of the file in the checked list box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void findEmbed(string fileName)
+        {
+            string embeddingPartString;
+            Package pkg = Package.Open(fileName);
+            StringBuilder embeddedFiles = new StringBuilder();
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(fileName);
+
+            string extension = fi.Extension.ToLower();
+
+            if ((extension == ".docx") || (extension == ".dotx") || (extension == ".docm") || (extension == ".dotm"))
+            {
+                embeddingPartString = "/word/embeddings/";
+            }
+            else if ((extension == ".xlsx") || (extension == ".xlsm") || (extension == ".xltx") || (extension == ".xltm"))
+            {
+                embeddingPartString = "/excel/embeddings/";
+            }
+            else
+            {
+                embeddingPartString = "/ppt/embeddings/";
+            }
+
+            // Get the embedded files names.
+            foreach (PackagePart pkgPart in pkg.GetParts())
+            {
+                if (pkgPart.Uri.ToString().StartsWith(embeddingPartString))
+                {
+                    string fileName1 = pkgPart.Uri.ToString().Remove(0, embeddingPartString.Length);
+                    embeddedFiles.Append(fileName1);
+                }
+            }
+            pkg.Close();
+            
+        }
+
         public void Dispose()
         {
             excelData.Dispose();
@@ -79,13 +123,13 @@ namespace it.valuelab.hedgeinvest.helpers
             }
             else
             {
-                throw new KeyNotFoundException("Sheet "+ name +" non trovato");
+                throw new KeyNotFoundException("Sheet " + name + " non trovato");
             }
         }
 
         public SharedStringTablePart SharedStringTablePart
         {
-            get 
+            get
             {
                 return _document.WorkbookPart.SharedStringTablePart;
             }

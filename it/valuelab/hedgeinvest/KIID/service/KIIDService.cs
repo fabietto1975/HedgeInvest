@@ -15,12 +15,16 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public List<m.KIIDData> readFundsData()
 
         {
-            string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
+            string inputFileName = @"C:\LAVORI\KIID\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
+            //string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
             List<m.KIIDData> result = new List<m.KIIDData>();
             using (ExcelHelper excelHelper = new ExcelHelper(inputFileName))
             {
+
+                //test giovanni
+                excelHelper.findEmbed(inputFileName);
                 //Performance
 
                 int row = 2;
@@ -78,8 +82,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         public void generateOutput(m.KIIDData data)
         {
-            const string outPath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT"; //TODO: esternalizzare property
-            const string templatePath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE"; //TODO: esternalizzare property
+            const string outPath = @"C:\Lavori\KIID\KKID\OUT";
+            const string templatePath = @"c:\LAVORI\KIID\KKID\TEMPLATE"; //TODO: esternalizzare property
+            //const string outPath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT"; //TODO: esternalizzare property
+            //const string templatePath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE"; //TODO: esternalizzare property
 
             string inputFileName = templatePath+"\\" +data.Template + ".docx"; ;
             string outputFileName = outPath + "\\" + data.Template + "_" + data.Isin+ ".docx";

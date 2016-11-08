@@ -28,7 +28,6 @@ namespace it.valuelab.hedgeinvest.KIID.service
         }
 
         public List<m.KIIDData> readFundsData()
-
         {
             //string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
             const string mainSheetname = "DATI KIID";
@@ -39,19 +38,19 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 //Performance
 
                 int row = 2;
-                Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
+                Dictionary<string, SortedDictionary<string, string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>();
                 string isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 while (!string.IsNullOrEmpty(isin))
                 {
                     string anno = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
                     string dato = excelHelper.GetValue(performanceSheetname, "D", row.ToString());
-                    SortedDictionary<string, string> isinPerformanceAnno; 
+                    SortedDictionary<string, string> isinPerformanceAnno;
                     if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
                     {
                         isinPerformanceAnno = new SortedDictionary<string, string>();
                     }
                     isinPerformanceAnno[anno] = dato;
-                    isinPerformanceAnnoMap[isin] =  isinPerformanceAnno;
+                    isinPerformanceAnnoMap[isin] = isinPerformanceAnno;
                     row++;
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
@@ -62,7 +61,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 while (!string.IsNullOrEmpty(classe))
                 {
                     string currentIsin = excelHelper.GetValue(mainSheetname, "D", row.ToString());
-                    SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
+                    SortedDictionary<string, string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
 
 
@@ -86,7 +85,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     result.Add(item);
                     row++;
                     classe = excelHelper.GetValue(mainSheetname, "C", row.ToString());
-                    
+
                 }
 
             }
@@ -96,7 +95,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public void generateOutput(m.KIIDData data)
         {
 
-            string outputFileName = outputfolder + "\\"  + "_" + data.Isin+ ".docx";
+            string outputFileName = outputfolder + "\\" + "_" + data.Isin + ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);

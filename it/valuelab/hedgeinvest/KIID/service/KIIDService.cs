@@ -12,10 +12,26 @@ namespace it.valuelab.hedgeinvest.KIID.service
 {
     public class KIIDService
     {
+        private string template;
+        private string datafile;
+        private string outputfolder;
+        private string language;
+        private string datagenerazione;
+
+        public KIIDService(string _template, string _datafile, string _outputfolder, string _language, string _datagenerazione)
+        {
+            template = _template;
+            datafile = _datafile;
+            outputfolder = _outputfolder;
+            datagenerazione = _datagenerazione;
+            language = _language;
+        }
+
         public List<m.KIIDData> readFundsData()
 
         {
-            string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
+            //string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
+            string inputFileName = datafile;
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
             List<m.KIIDData> result = new List<m.KIIDData>();
@@ -78,8 +94,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         public void generateOutput(m.KIIDData data)
         {
-            const string outPath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT"; //TODO: esternalizzare property
-            const string templatePath = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE"; //TODO: esternalizzare property
+            string outPath = outputfolder;
+            string templatePath = template;
 
             string inputFileName = templatePath+"\\" +data.Template + ".docx"; ;
             string outputFileName = outPath + "\\" + data.Template + "_" + data.Isin+ ".docx";

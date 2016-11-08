@@ -17,7 +17,8 @@ namespace it.valuelab.hedgeinvest.KIID
     {
         static void Main()
         {
-            s.KIIDService service = new s.KIIDService();
+            s.KIIDService service = new s.KIIDService(@"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE", @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX",
+                    @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT","","");
             List<m.KIIDData> kiidDataList = service.readFundsData();
             foreach (m.KIIDData kiiddata in kiidDataList)
             {

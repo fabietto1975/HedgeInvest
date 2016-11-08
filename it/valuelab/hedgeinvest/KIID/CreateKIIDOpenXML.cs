@@ -17,8 +17,8 @@ namespace it.valuelab.hedgeinvest.KIID
     {
         static void Main()
         {
-            s.KIIDService service = new s.KIIDService(@"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE", @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX",
-                    @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT","",new System.DateTime());
+            s.KIIDService service = new s.KIIDService(@"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\TEMPLATE\HI Core IT.docx", @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX",
+                    @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\OUT","IT",new System.DateTime());
             List<m.KIIDData> kiidDataList = service.readFundsData();
             foreach (m.KIIDData kiiddata in kiidDataList)
             {

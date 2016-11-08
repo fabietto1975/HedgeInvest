@@ -9,8 +9,6 @@ namespace it.valuelab.hedgeinvest.KIID.model
     public sealed class KIIDData
     {
 
-        private String _template;
-        public string Template { get { return _template; }  }
         private String _classe;
         public String Classe { get { return _classe; } }
         private string _isin;
@@ -25,8 +23,6 @@ namespace it.valuelab.hedgeinvest.KIID.model
         public String Testo3 { get { return _testo3; } }
         private String _speseSottoscrizione;
         public String SpeseSottoscrizione { get { return _speseSottoscrizione; } }
-        private string _dataKIID;
-        public string DataKIID { get { return _dataKIID; } }
         private String _speseDiRimborso;
         public String SpeseDiRimborso { get { return _speseDiRimborso; } }
         private String _speseCorrenti;
@@ -40,18 +36,15 @@ namespace it.valuelab.hedgeinvest.KIID.model
         private SortedDictionary<string, string> _performances;
         public SortedDictionary<string, string> Performances { get { return _performances; } }
 
-        public KIIDData(String template, String classe, String isin, String classeDiRischio, String testo1, String testo2, String testo3, string datakiid, string speseSottoscrizione,
+        public KIIDData(String classe, String isin, String classeDiRischio, String testo1, String testo2, String testo3, string speseSottoscrizione,
                 String speseDiRimborso, String speseCorrenti, String speseDiConversione, String commissioniRendimento, String informazioniPratiche, SortedDictionary<string, string> performances)
         {
-
-            _template = template;
             _classe = classe;
             _isin = isin;
             _classeDiRischio = classeDiRischio;
             _testo1 = testo1;
             _testo2 = testo2;
             _testo3 = testo3;
-            _dataKIID = datakiid;
             _speseSottoscrizione = speseSottoscrizione;
             _speseDiRimborso = speseDiRimborso;
             _speseCorrenti = speseCorrenti;

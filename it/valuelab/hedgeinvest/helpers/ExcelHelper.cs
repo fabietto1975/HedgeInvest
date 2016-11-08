@@ -28,20 +28,7 @@ namespace it.valuelab.hedgeinvest.helpers
             string value = "";
             if (currentCell != null)
             {
-                if (currentCell.CellValue != null)
-                {
-                    value = currentCell.CellValue.InnerText;
-                }
-                else
-                {
-                    value = currentCell.InnerText;
-                }
-                if ((currentCell.DataType != null) && (currentCell.DataType == CellValues.SharedString))
-                {
-                    value = excelData.SharedStringTablePart.SharedStringTable
-                    .ChildElements[Int32.Parse(value)]
-                    .InnerText;
-                }
+                value = GetCellText(currentCell);
 
             }
             return value;
@@ -52,17 +39,49 @@ namespace it.valuelab.hedgeinvest.helpers
             WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);
             SheetData sd = currentSheet.Worksheet.Elements<SheetData>().FirstOrDefault();
             Row row = sd.Elements<Row>().ElementAt(rowindex);
+            
             foreach(Cell c in row.Elements<Cell>())
             {
                 if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
-                    System.Diagnostics.Debug.WriteLine(excelData.SharedStringTablePart.SharedStringTable
-                    .ChildElements[int.Parse(c.InnerText)]
-                    .InnerText);
+                    System.Diagnostics.Debug.WriteLine(GetCellText(c));
             }
+            
             Cell result = row.Elements<Cell>().Where(
-                c => c.CellValue.Text == content
+                c =>  content.Equals(GetCellText(c))
                 ).FirstOrDefault();
             return result;
+        }
+
+        public string GetCellColumn(Cell c)
+        {
+            if (c !=null && c.CellReference != null)
+            {
+                return c.CellReference.Value[0].ToString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private string GetCellText(Cell c)
+        {
+            string value;
+            if (c.CellValue != null)
+            {
+                value = c.CellValue.InnerText;
+            }
+            else
+            {
+                value = c.InnerText;
+            }
+            if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+            {
+                value = excelData.SharedStringTablePart.SharedStringTable
+                .ChildElements[Int32.Parse(value)]
+                .InnerText;
+            }
+            return value;
         }
         
         public void Dispose()

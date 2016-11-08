@@ -55,42 +55,53 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     row++;
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
-
+                string suffix = "";
+                if (!language.Equals("IT"))
+                {
+                    suffix += " - " + language;
+                }
+                Dictionary<string, string> fieldPosition = new Dictionary<String, string>();
                 //Header row
-                Cell cell = excelHelper.GetCellByContent(mainSheetname, "TESTO1",2);
-
+                string classeCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "CLASSE", 1));
+                string isinCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "ISIN", 1));
+                string classeDiRischioCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "CLASSE DI RISCHIO", 1));
+                string testo1Col = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "TESTO1" + suffix, 1));
+                string testo2Col = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "TESTO2" + suffix, 1));
+                string testo3Col = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "TESTO3" + suffix, 1));
+                string spesesottoscrizioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE SOTTOSCRIZIONE", 1));
+                string speserimborsoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI RIMBORSO", 1));
+                string spesecorrentiCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE CORRENTI", 1));
+                string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
+                string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
+                string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
 
                 //Dati Fondo
                 row = 3;
-                string classe = excelHelper.GetValue(mainSheetname, "C", row.ToString());
+                string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
                 while (!string.IsNullOrEmpty(classe))
                 {
-                    string currentIsin = excelHelper.GetValue(mainSheetname, "D", row.ToString());
+                    string currentIsin = excelHelper.GetValue(mainSheetname, isinCol, row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
 
-                    
-
                     m.KIIDData item = new m.KIIDData(
-                        excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         classe,
                         currentIsin,
-                        excelHelper.GetValue(mainSheetname, "E", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "F", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "G", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "H", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "J", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "K", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "L", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "M", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "N", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "O", row.ToString()),
-                        excelHelper.GetValue(mainSheetname, "P", row.ToString()),
+                        excelHelper.GetValue(mainSheetname, classeDiRischioCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, testo1Col, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, testo2Col, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, testo3Col, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
+                        excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
                         performances
                         );
                     result.Add(item);
                     row++;
-                    classe = excelHelper.GetValue(mainSheetname, "C", row.ToString());
+                    classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
                     
                 }
 

@@ -31,11 +31,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         {
             //string inputFileName = @"D:\LAVORO\PROGETTI\HEDGEINVEST\KKID\INPUT\DATIKIDD.XLSX"; //TODO: esternalizzare property
-            string inputFileName = datafile;
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
             List<m.KIIDData> result = new List<m.KIIDData>();
-            using (ExcelHelper excelHelper = new ExcelHelper(inputFileName))
+            using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
                 //Performance
 
@@ -97,9 +96,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
             string outPath = outputfolder;
             string templatePath = template;
 
-            string inputFileName = templatePath+"\\" +data.Template + ".docx"; ;
-            string outputFileName = outPath + "\\" + data.Template + "_" + data.Isin+ ".docx";
-            using (KIIDWordHelper wordHelper = new KIIDWordHelper(inputFileName, outputFileName))
+            string outputFileName = outputfolder + "\\"  + "_" + data.Isin+ ".docx";
+            using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);

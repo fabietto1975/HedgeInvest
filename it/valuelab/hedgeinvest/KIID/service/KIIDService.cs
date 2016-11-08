@@ -64,6 +64,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     string currentIsin = excelHelper.GetValue(mainSheetname, "D", row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
+
+
                     m.KIIDData item = new m.KIIDData(
                         excelHelper.GetValue(mainSheetname, "B", row.ToString()),
                         classe,

@@ -58,18 +58,25 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             ChartPart cp = Document.MainDocumentPart.ChartParts.FirstOrDefault();
             Chart chart = cp.ChartSpace.Elements<Chart>().FirstOrDefault();
             BarChart barchart = chart.PlotArea.Elements<BarChart>().FirstOrDefault();
+
             BarChartSeries series = barchart.Elements<BarChartSeries>().FirstOrDefault();
+            
+            
+            //StringReference sref = barchart.Elements<ChartText>().FirstOrDefault().Elements<StringReference>().FirstOrDefault();
+            
 
             CategoryAxisData labels = new CategoryAxisData();
             DocumentFormat.OpenXml.Drawing.Charts.Values values = new DocumentFormat.OpenXml.Drawing.Charts.Values();
 
             NumberReference nref = new NumberReference();
-            DocumentFormat.OpenXml.Drawing.Charts.Formula f = new DocumentFormat.OpenXml.Drawing.Charts.Formula(baseFormula + idx);
+            string formula = baseFormula + (idx + 1);
+            DocumentFormat.OpenXml.Drawing.Charts.Formula f = new DocumentFormat.OpenXml.Drawing.Charts.Formula();
+            f.Text = formula;
             nref.Formula = f;
             NumberingCache nc = new NumberingCache();//nref.Descendants<NumberingCache>().First();
             nc.PointCount = new PointCount();
             nc.PointCount.Val = (uint)idx;
-            int pointIndex = 1;
+            int pointIndex = 0;
             foreach (string val in data)
             {
                 NumericPoint point = new NumericPoint();
@@ -89,19 +96,20 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                 pointIndex++;
             }
             nref.AppendChild(nc);
+
             if ("LABELS".Equals(mode))
             {
                 labels.AppendChild(nref);
-                series.AppendChild(labels);
+                series.ReplaceChild<CategoryAxisData>(labels, series.Elements<CategoryAxisData>().FirstOrDefault());
+                
             }
             else if ("VALUES".Equals(mode))
             {
+                System.Diagnostics.Debug.WriteLine("bef " + series.InnerXml);    
                 values.AppendChild(nref);
-                series.AppendChild(values);
+                series.ReplaceChild<DocumentFormat.OpenXml.Drawing.Charts.Values>(values, series.Elements< DocumentFormat.OpenXml.Drawing.Charts.Values>().FirstOrDefault());
+                System.Diagnostics.Debug.WriteLine("aft " + series.InnerXml);
             };
-
-
-
         }
 
         public void EditPerformanceTable(SortedDictionary<string, string> performances)
@@ -114,7 +122,6 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 
 
                 //Aggiornamento Embedded XLS
-                /*
                 ChartPart cp = Document.MainDocumentPart.ChartParts.FirstOrDefault();
                 ExternalData ed = cp.ChartSpace.Elements<ExternalData>().FirstOrDefault();
                 EmbeddedPackagePart epp = (EmbeddedPackagePart)cp.Parts.Where(
@@ -138,9 +145,24 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                         //System.Diagnostics.Debug.WriteLine(mainRow.InnerXml);
                         //sd.RemoveAllChildren<Row>();
                         //mainRow.RemoveAllChildren();
+                        int rowCount = sd.Elements<Row>().Count();
+                        //System.Diagnostics.Debug.WriteLine(rowCount);
                         for (int idx =0; idx< performances.Count; idx++)
                         {
-                            Row row = new Row();
+                            Row row;
+                            Boolean append = false;
+                            if (idx + 1 < rowCount)
+                            {
+                                row = sd.Elements<Row>().ElementAt((idx + 1));
+                            }
+                            else
+                            {
+                                row = new Row();
+                                append = true;
+
+                            }
+
+                            //new Row();
                             string key = performances.Keys.ElementAt(idx);
                             //Labels
                             Cell labelCell = new Cell();
@@ -154,14 +176,16 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                             valueCell.Elements<CellValue>().FirstOrDefault().Text = valuePerc.ToString(CultureInfo.InvariantCulture);
                             row.AppendChild(labelCell);
                             row.Append(valueCell);
-                            sd.AppendChild(row);
+                            
+                            if (append)
+                                sd.AppendChild(row);
                         }
                         
 
                     }
                     using (Stream s = epp.GetStream())
                         ms.WriteTo(s);
-                }*/
+                }
             }
             else
             {

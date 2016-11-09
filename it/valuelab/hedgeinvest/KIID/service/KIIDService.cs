@@ -91,10 +91,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         excelHelper.GetValue(mainSheetname, testo1Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo2Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo3Col, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()))).ToString(),
                         excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
                         excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
                         datagenerazioneStr,
@@ -119,15 +119,21 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
-                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
+                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
+                wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0} %", data.SpeseDiRimborso));
+                wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0} %", data.SpeseDiConversione));
+                wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0} %", data.SpeseCorrenti));
+                wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
+                wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
+                wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceTable(data.Performances);
 
             }
             using (WordHelper wordHelper = new WordHelper(outputFileName))
             {
-                wordHelper.SaveAsPDF();
+                //wordHelper.SaveAsPDF();
             }
 
 

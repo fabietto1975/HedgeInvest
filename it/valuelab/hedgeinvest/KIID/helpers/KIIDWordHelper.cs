@@ -14,7 +14,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
     class KIIDWordHelper : WordHelper
     {
 
-        public KIIDWordHelper(String filename, String outName) : base(filename, outName) { }
+        public KIIDWordHelper(string filename, String outName) : base(filename, outName) { }
 
         public void InsertProfiloRischio(string profiloRischio)
         {

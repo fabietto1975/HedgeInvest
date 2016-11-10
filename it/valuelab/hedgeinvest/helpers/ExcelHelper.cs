@@ -18,6 +18,14 @@ namespace it.valuelab.hedgeinvest.helpers
 
         }
 
+        public int GetSheetRowCount(string sheet)
+
+        {
+            WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);
+            SheetData sd = currentSheet.Worksheet.Elements<SheetData>().FirstOrDefault();
+            return sd.Elements<Row>().Count();
+        }
+
         public String GetValue(String sheet, String col, String row)
         {
             WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);

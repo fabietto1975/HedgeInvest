@@ -17,7 +17,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private string datafile;
         private string outputfolder;
         private string language;
+        private string country;
         private DateTime datagenerazione;
+        private CultureInfo cultureInfo;
 
         public KIIDService(string _template, string _datafile, string _outputfolder, string _language, DateTime _datagenerazione)
         {
@@ -25,7 +27,12 @@ namespace it.valuelab.hedgeinvest.KIID.service
             datafile = _datafile;
             outputfolder = _outputfolder;
             datagenerazione = _datagenerazione;
-            language = _language;
+            string[] splitLanguage = _language.Split('_');
+            language = splitLanguage[0];
+            country = splitLanguage[1];
+            cultureInfo = new CultureInfo(language);
+
+
         }
 
         public List<m.KIIDData> readFundsData()
@@ -36,6 +43,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             List<m.KIIDData> result = new List<m.KIIDData>();
             using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
+                System.Diagnostics.Debug.WriteLine(excelHelper.GetSheetRowCount(performanceSheetname));
                 //Performance
 
                 int row = 2;
@@ -74,7 +82,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-                string datagenerazioneStr = datagenerazione.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture); //TODO: mese in formato testo, gestire locale
+                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo ); //TODO: mese in formato testo, gestire locale
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -120,12 +128,14 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
+                wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
                 wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0} %", data.SpeseDiRimborso));
                 wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0} %", data.SpeseDiConversione));
                 wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0} %", data.SpeseCorrenti));
                 wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
                 wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
+                //Replace con tag del mail merge?
                 wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceTable(data.Performances);
@@ -133,7 +143,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             }
             using (WordHelper wordHelper = new WordHelper(outputFileName))
             {
-                //wordHelper.SaveAsPDF();
+                wordHelper.SaveAsPDF();
             }
 
 

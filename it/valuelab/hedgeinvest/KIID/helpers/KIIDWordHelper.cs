@@ -112,10 +112,17 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             };
         }
 
-        public void EditPerformanceTable(SortedDictionary<string, string> performances)
+        public void EditPerformanceChart(SortedDictionary<string, string> performances)
         {
             if (performances != null)
             {
+                foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
+                {
+                    TableRow row = t.Elements<TableRow>().ElementAt(10);
+                    row.Remove();
+                }
+
+
                 //Aggiornamento XML
                 fillPoints("Foglio1!$A$2:$A$", "LABELS", performances.Keys.ToList());
                 fillPoints("Foglio1!$B$2:$B$", "VALUES", performances.Values.ToList());
@@ -129,7 +136,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                                                                 .FirstOrDefault()
                                                                 .OpenXmlPart;
                 using (System.IO.Stream str = epp.GetStream())
-                    using (MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new MemoryStream())
                 {
                     CopyStream(str, ms);
                     using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(ms, true))
@@ -147,7 +154,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                         //mainRow.RemoveAllChildren();
                         int rowCount = sd.Elements<Row>().Count();
                         //System.Diagnostics.Debug.WriteLine(rowCount);
-                        for (int idx =0; idx< performances.Count; idx++)
+                        for (int idx = 0; idx < performances.Count; idx++)
                         {
                             Row row;
                             Boolean append = false;
@@ -176,11 +183,11 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                             valueCell.Elements<CellValue>().FirstOrDefault().Text = valuePerc.ToString(CultureInfo.InvariantCulture);
                             row.AppendChild(labelCell);
                             row.Append(valueCell);
-                            
+
                             if (append)
                                 sd.AppendChild(row);
                         }
-                        
+
 
                     }
                     using (Stream s = epp.GetStream())
@@ -189,9 +196,12 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             }
             else
             {
-
+                foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
+                {
+                    TableRow row = t.Elements<TableRow>().ElementAt(9);
+                    row.Remove();
+                }
             }
-
         }
     }
 }

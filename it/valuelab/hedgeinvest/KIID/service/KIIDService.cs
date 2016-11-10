@@ -64,9 +64,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
                 string suffix = "";
-                if (!language.Equals("IT"))
+                if (!language.Equals("it-IT"))
                 {
-                    suffix += " - " + language;
+                    suffix += " - " + language.Split('-')[1];
                 }
                 Dictionary<string, string> fieldPosition = new Dictionary<String, string>();
                 //Header row
@@ -128,6 +128,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
+                wordHelper.replaceText("@TESTO2@", data.Testo2);
+                wordHelper.replaceText("@TESTO3@", data.Testo3);
                 wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
                 wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0} %", data.SpeseDiRimborso));
@@ -138,7 +140,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 //Replace con tag del mail merge?
                 wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
-                wordHelper.EditPerformanceTable(data.Performances);
+                wordHelper.EditPerformanceChart(data.Performances);
 
             }
             using (WordHelper wordHelper = new WordHelper(outputFileName))

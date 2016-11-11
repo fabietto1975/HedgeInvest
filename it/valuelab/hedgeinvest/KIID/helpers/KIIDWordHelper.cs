@@ -61,10 +61,6 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 
             BarChartSeries series = barchart.Elements<BarChartSeries>().FirstOrDefault();
             
-            
-            //StringReference sref = barchart.Elements<ChartText>().FirstOrDefault().Elements<StringReference>().FirstOrDefault();
-            
-
             CategoryAxisData labels = new CategoryAxisData();
             DocumentFormat.OpenXml.Drawing.Charts.Values values = new DocumentFormat.OpenXml.Drawing.Charts.Values();
 

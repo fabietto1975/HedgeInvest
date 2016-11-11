@@ -31,8 +31,6 @@ namespace it.valuelab.hedgeinvest.KIID.service
             language = splitLanguage[0];
             country = splitLanguage[1];
             cultureInfo = new CultureInfo(language);
-
-
         }
 
         public List<m.KIIDData> readFundsData()
@@ -40,26 +38,42 @@ namespace it.valuelab.hedgeinvest.KIID.service
         {
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
+            const int MAX_EMPTY_ROWS = 3;
             List<m.KIIDData> result = new List<m.KIIDData>();
             using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
-                System.Diagnostics.Debug.WriteLine(excelHelper.GetSheetRowCount(performanceSheetname));
+                
                 //Performance
 
                 int row = 2;
                 Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
                 string isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
-                while (!string.IsNullOrEmpty(isin))
+                int emptyRows = 0;
+
+                while (emptyRows<= MAX_EMPTY_ROWS)
                 {
-                    string anno = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
-                    string dato = excelHelper.GetValue(performanceSheetname, "D", row.ToString());
-                    SortedDictionary<string, string> isinPerformanceAnno; 
-                    if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
+                    string anno= "0", dato = "0";
+                    if (string.IsNullOrEmpty(isin))
                     {
-                        isinPerformanceAnno = new SortedDictionary<string, string>();
+                        emptyRows++;
                     }
-                    isinPerformanceAnno[anno] = dato;
-                    isinPerformanceAnnoMap[isin] =  isinPerformanceAnno;
+                    else
+                    {
+                        emptyRows = 0;
+                        anno = excelHelper.GetValue(performanceSheetname, "C", row.ToString());
+                        dato = excelHelper.GetValue(performanceSheetname, "D", row.ToString());
+                        if (string.IsNullOrEmpty(dato))
+                        {
+                            dato = "0";
+                        }
+                        SortedDictionary<string, string> isinPerformanceAnno;
+                        if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
+                        {
+                            isinPerformanceAnno = new SortedDictionary<string, string>();
+                        }
+                        isinPerformanceAnno[anno] = dato;
+                        isinPerformanceAnnoMap[isin] = isinPerformanceAnno;
+                    }
                     row++;
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
@@ -137,11 +151,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0} %", data.SpeseCorrenti));
                 wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
                 wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
-                //Replace con tag del mail merge?
                 wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceChart(data.Performances);
-
             }
             using (WordHelper wordHelper = new WordHelper(outputFileName))
             {

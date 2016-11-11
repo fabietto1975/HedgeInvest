@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace it.valuelab.hedgeinvest.helpers
 {
@@ -15,6 +16,14 @@ namespace it.valuelab.hedgeinvest.helpers
         {
             excelData = new ExcelDocumentData(SpreadsheetDocument.Open(filename, false));
 
+        }
+
+        public int GetSheetRowCount(string sheet)
+
+        {
+            WorksheetPart currentSheet = excelData.GetWorksheetPartByName(sheet);
+            SheetData sd = currentSheet.Worksheet.Elements<SheetData>().FirstOrDefault();
+            return sd.Elements<Row>().Count();
         }
 
         public String GetValue(String sheet, String col, String row)
@@ -49,7 +58,7 @@ namespace it.valuelab.hedgeinvest.helpers
         {
             if (c !=null && c.CellReference != null)
             {
-                return c.CellReference.Value[0].ToString();
+                return Regex.Replace(c.CellReference, "[0-9]", ""); 
             }
             else
             {
@@ -73,7 +82,7 @@ namespace it.valuelab.hedgeinvest.helpers
                 value = excelData.SharedStringTablePart.SharedStringTable
                 .ChildElements[Int32.Parse(value)]
                 .InnerText;
-            }
+            } 
             return value;
         }
         

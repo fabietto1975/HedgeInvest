@@ -17,7 +17,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private string datafile;
         private string outputfolder;
         private string language;
+        private string country;
         private DateTime datagenerazione;
+        private CultureInfo cultureInfo;
 
         public KIIDService(string _template, string _datafile, string _outputfolder, string _language, DateTime _datagenerazione)
         {
@@ -25,7 +27,12 @@ namespace it.valuelab.hedgeinvest.KIID.service
             datafile = _datafile;
             outputfolder = _outputfolder;
             datagenerazione = _datagenerazione;
-            language = _language;
+            string[] splitLanguage = _language.Split('_');
+            language = splitLanguage[0];
+            country = splitLanguage[1];
+            cultureInfo = new CultureInfo(language);
+
+
         }
 
         public List<m.KIIDData> readFundsData()
@@ -36,6 +43,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             List<m.KIIDData> result = new List<m.KIIDData>();
             using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
+                System.Diagnostics.Debug.WriteLine(excelHelper.GetSheetRowCount(performanceSheetname));
                 //Performance
 
                 int row = 2;
@@ -56,9 +64,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 }
                 string suffix = "";
-                if (!language.Equals("IT"))
+                if (!language.Equals("it-IT"))
                 {
-                    suffix += " - " + language;
+                    suffix += " - " + language.Split('-')[1];
                 }
                 Dictionary<string, string> fieldPosition = new Dictionary<String, string>();
                 //Header row
@@ -74,7 +82,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-                string datagenerazioneStr = datagenerazione.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture); //TODO: mese in formato testo, gestire locale
+                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo ); //TODO: mese in formato testo, gestire locale
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -91,10 +99,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         excelHelper.GetValue(mainSheetname, testo1Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo2Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo3Col, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()))).ToString(),
                         excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
                         excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
                         datagenerazioneStr,
@@ -113,16 +121,31 @@ namespace it.valuelab.hedgeinvest.KIID.service
         public void generateOutput(m.KIIDData data)
         {
             //Nome file--> nome fondo desunto dal template
-            string templateName =  template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
-            string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID "+ data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language +".docx";
+            string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
+            string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID " + data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language + ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
-                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
                 wordHelper.replaceText("@TESTO1@", data.Testo1);
+                wordHelper.replaceText("@TESTO2@", data.Testo2);
+                wordHelper.replaceText("@TESTO3@", data.Testo3);
+                wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
+                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
+                wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0} %", data.SpeseDiRimborso));
+                wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0} %", data.SpeseDiConversione));
+                wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0} %", data.SpeseCorrenti));
+                wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
+                wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
+                //Replace con tag del mail merge?
+                wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
-                wordHelper.EditPerformanceTable(data.Performances);
+                wordHelper.EditPerformanceChart(data.Performances);
+
+            }
+            using (WordHelper wordHelper = new WordHelper(outputFileName))
+            {
+                wordHelper.SaveAsPDF();
             }
 
 

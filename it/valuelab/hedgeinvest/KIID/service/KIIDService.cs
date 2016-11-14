@@ -9,11 +9,13 @@ using it.valuelab.hedgeinvest.helpers;
 using KIID.it.valuelab.hedgeinvest.KIID.helpers;
 using System.Globalization;
 using System.Threading;
+using Common.Logging;
 
 namespace it.valuelab.hedgeinvest.KIID.service
 {
     public class KIIDService
     {
+        private static readonly ILog Log = LogManager.GetLogger<KIIDService>();
         private string template;
         private string datafile;
         private string outputfolder;
@@ -41,6 +43,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             const string performanceSheetname = "PERFORMANCE";
             const int MAX_EMPTY_ROWS = 3;
             List<m.KIIDData> result = new List<m.KIIDData>();
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
             using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
                 
@@ -66,6 +69,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         if (string.IsNullOrEmpty(dato))
                         {
                             dato = "0";
+                        } else
+                        {
+                            dato = (Convert.ToDouble(dato)/100) .ToString();
                         }
                         SortedDictionary<string, string> isinPerformanceAnno;
                         if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
@@ -106,7 +112,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     string currentIsin = excelHelper.GetValue(mainSheetname, isinCol, row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
-                    Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
+                    
                     m.KIIDData item = new m.KIIDData(
                         classe,
                         currentIsin,
@@ -138,6 +144,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             //Nome file--> nome fondo desunto dal template
             string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
             string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID " + data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language.Split('-')[1] + ".docx";
+            Log.Info("Inizio Generazione documento" + outputFileName);
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
@@ -146,10 +153,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.replaceText("@TESTO2@", data.Testo2);
                 wordHelper.replaceText("@TESTO3@", data.Testo3);
                 wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
-                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0} %", data.SpeseSottoscrizione));
-                wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0} %", data.SpeseDiRimborso));
-                wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0} %", data.SpeseDiConversione));
-                wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0} %", data.SpeseCorrenti));
+                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0}%", data.SpeseSottoscrizione));
+                wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0}%", data.SpeseDiRimborso));
+                wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0}%", data.SpeseDiConversione));
+                wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0}%", data.SpeseCorrenti));
                 wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
                 wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
                 wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
@@ -160,6 +167,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 wordHelper.SaveAsPDF();
             }
+            Log.Info("Generazione documento" + outputFileName + " terminata");
 
 
         }

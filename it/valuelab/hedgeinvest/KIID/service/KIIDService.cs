@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using it.valuelab.hedgeinvest.helpers;
 using KIID.it.valuelab.hedgeinvest.KIID.helpers;
 using System.Globalization;
+using System.Threading;
 
 namespace it.valuelab.hedgeinvest.KIID.service
 {
@@ -96,7 +97,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo ); //TODO: mese in formato testo, gestire locale
+                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo ); 
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -105,7 +106,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     string currentIsin = excelHelper.GetValue(mainSheetname, isinCol, row.ToString());
                     SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
-
+                    Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
                     m.KIIDData item = new m.KIIDData(
                         classe,
                         currentIsin,
@@ -113,10 +114,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         excelHelper.GetValue(mainSheetname, testo1Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo2Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo3Col, row.ToString()),
-                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()))).ToString(),
-                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString()))).ToString(),
-                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString()))).ToString(),
-                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString()))).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()))*100).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString())) * 100).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString())) * 100).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString())) * 100).ToString(),
                         excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
                         excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
                         datagenerazioneStr,
@@ -136,7 +137,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
         {
             //Nome file--> nome fondo desunto dal template
             string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
-            string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID " + data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language + ".docx";
+            string outputFileName = outputfolder + "\\" + templateName + " Fund - KIID " + data.Classe + " " + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + " " + language.Split('-')[1] + ".docx";
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);

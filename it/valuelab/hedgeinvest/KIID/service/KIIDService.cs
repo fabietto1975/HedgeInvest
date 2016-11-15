@@ -10,10 +10,11 @@ using KIID.it.valuelab.hedgeinvest.KIID.helpers;
 using System.Globalization;
 using System.Threading;
 using Common.Logging;
+using System.ComponentModel;
 
 namespace it.valuelab.hedgeinvest.KIID.service
 {
-    public class KIIDService
+    public class KIIDService : INotifyPropertyChanged
     {
         private static readonly ILog Log = LogManager.GetLogger<KIIDService>();
         private string template;
@@ -23,6 +24,17 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private string country;
         private DateTime datagenerazione;
         private CultureInfo cultureInfo;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private int TotNumeroDocumenti = 0;
+        private int CurrentNumeroDocumenti = 0;
+        private double _progress;
+        public double progress
+        {
+            get { return _progress; }
+            set { _progress = value; }
+        }
 
         public KIIDService(string _template, string _datafile, string _outputfolder, string _language, DateTime _datagenerazione)
         {
@@ -134,8 +146,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
                     
                 }
-
+                
             }
+            TotNumeroDocumenti = result.Count();
             return result;
         }
 
@@ -149,7 +162,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 wordHelper.replaceText("@CLASSE@", data.Classe);
                 wordHelper.replaceText("@ISIN@", data.Isin);
-                wordHelper.replaceText("@TESTO1@", data.Testo1);
+                wordHelper.replaceText("@TESTO1@", data.Testo1, "FORMATTED");
                 wordHelper.replaceText("@TESTO2@", data.Testo2);
                 wordHelper.replaceText("@TESTO3@", data.Testo3);
                 wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
@@ -167,10 +180,23 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 wordHelper.SaveAsPDF();
             }
-            Log.Info("Generazione documento" + outputFileName + " terminata");
+            Log.Info("Generazione documento " + (CurrentNumeroDocumenti+1) + " di " + TotNumeroDocumenti + " " + outputFileName + " terminata");
 
+            CurrentNumeroDocumenti++;
+            progress = (double)CurrentNumeroDocumenti / TotNumeroDocumenti;
+            NotifyPropertyChanged();
 
         }
+
+
+        private void NotifyPropertyChanged()
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("progress"));
+            }
+        }
+
 
     }
 }

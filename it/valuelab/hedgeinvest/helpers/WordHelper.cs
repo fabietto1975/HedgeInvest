@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml;
+﻿using Common.Logging;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Office.Interop.Word;
@@ -13,6 +14,7 @@ namespace it.valuelab.hedgeinvest.helpers
 {
     class WordHelper : IDisposable
     {
+        private static readonly ILog Log = LogManager.GetLogger<WordHelper>();
 
         protected string _filename;
         protected string _outName;
@@ -34,10 +36,41 @@ namespace it.valuelab.hedgeinvest.helpers
             _outName = outName;
         }
 
-        public void replaceText(string oldtext, string newtext)
+        public void replaceText(string oldtext, string newtext, string mode="PLAIN")
         {
             string docText = null;
+            Body body =_document.MainDocumentPart.Document.Body;
+            Text item = body.Descendants<Text>().Where(t => t.Text == oldtext).FirstOrDefault();
+            if (item != null)
+            {
+                if (mode.Equals("PLAIN"))
+                {
+                    item.Text = newtext;
 
+                } else
+                {
+                    Log.Debug(newtext);
+                    //Gestione elenchi puntati
+                    string[] splitted = newtext.Split('\n');
+                    Log.Debug(splitted.Length);
+                    if (splitted.Length > 1)
+                    {
+                        item.Text = splitted[0];
+                        Text currentTextBlock = item;
+                        for (int idx = 1; idx < splitted.Length; idx++)
+                        {
+                            DocumentFormat.OpenXml.Wordprocessing.Break b = new DocumentFormat.OpenXml.Wordprocessing.Break();
+                            currentTextBlock.InsertAfterSelf(b);
+                            Text newTextBlock = new Text(splitted[idx]);
+                            b.InsertAfterSelf(newTextBlock);
+                            currentTextBlock = newTextBlock;
+                        }
+
+                    }
+                }
+
+            }
+            /*
             using (StreamReader sr = new StreamReader(Document.MainDocumentPart.GetStream()))
             {
                 docText = sr.ReadToEnd();
@@ -46,6 +79,7 @@ namespace it.valuelab.hedgeinvest.helpers
             Regex regexText = new Regex(oldtext);
             newtext = formattaTesto(newtext);
             docText = regexText.Replace(docText, newtext);
+            */
             using (StreamWriter sw = new StreamWriter(Document.MainDocumentPart.GetStream(FileMode.Create)))
             {
                 sw.Write(docText);

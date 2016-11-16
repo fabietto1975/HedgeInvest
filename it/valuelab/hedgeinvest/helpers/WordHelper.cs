@@ -36,7 +36,34 @@ namespace it.valuelab.hedgeinvest.helpers
             _outName = outName;
         }
 
-        public void replaceText(string oldtext, string newtext, string mode="PLAIN")
+
+        public void RemoveRowByContent(string texttofind)
+        {
+            Body body = _document.MainDocumentPart.Document.Body;
+            Text item = body.Descendants<Text>().Where(t => t.Text == texttofind).FirstOrDefault();
+            OpenXmlElement ancestor;
+            OpenXmlElement currItem = item;
+            while (true && item !=null)
+            {
+                ancestor = currItem.Parent;
+              
+                if (ancestor == null)
+                {
+                    break;
+                }
+                else if (ancestor is TableRow)
+                {
+                    ancestor.Remove();
+                    Log.Debug("REMOVED ROW");
+                    break;
+                }
+          
+
+                currItem = ancestor;
+            }
+            return;
+        }
+        public void ReplaceText(string oldtext, string newtext, string mode="PLAIN")
         {
             string docText = null;
             Body body =_document.MainDocumentPart.Document.Body;
@@ -47,7 +74,8 @@ namespace it.valuelab.hedgeinvest.helpers
                 {
                     item.Text = newtext;
 
-                } else
+                }
+                else
                 {
                     /*
                     Run currentRun = (Run) item.Parent;

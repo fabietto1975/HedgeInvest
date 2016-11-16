@@ -51,7 +51,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             }
         }
 
-        private void fillPoints(string baseFormula, String mode, List<String> data)
+        private void FillPoints(string baseFormula, String mode, List<String> data)
         {
             int idx = data.Count;
 
@@ -101,10 +101,8 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             }
             else if ("VALUES".Equals(mode))
             {
-                System.Diagnostics.Debug.WriteLine("bef " + series.InnerXml);    
                 values.AppendChild(nref);
                 series.ReplaceChild<DocumentFormat.OpenXml.Drawing.Charts.Values>(values, series.Elements< DocumentFormat.OpenXml.Drawing.Charts.Values>().FirstOrDefault());
-                System.Diagnostics.Debug.WriteLine("aft " + series.InnerXml);
             };
         }
 
@@ -112,17 +110,19 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
         {
             if (performances != null)
             {
+                /*
                 foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
                 {
                     TableRow row = t.Elements<TableRow>().ElementAt(10);
                     row.Remove();
                 }
+                */
+                this.RemoveRowByContent("@TESTO2@");
 
 
                 //Aggiornamento XML
-                fillPoints("Foglio1!$A$2:$A$", "LABELS", performances.Keys.ToList());
-                fillPoints("Foglio1!$B$2:$B$", "VALUES", performances.Values.ToList());
-
+                FillPoints("Foglio1!$A$2:$A$", "LABELS", performances.Keys.ToList());
+                FillPoints("Foglio1!$B$2:$B$", "VALUES", performances.Values.ToList());
 
                 //Aggiornamento Embedded XLS
                 ChartPart cp = Document.MainDocumentPart.ChartParts.FirstOrDefault();
@@ -192,11 +192,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
             }
             else
             {
-                foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
-                {
-                    TableRow row = t.Elements<TableRow>().ElementAt(9);
-                    row.Remove();
-                }
+                this.RemoveRowByContent("@TESTO3@");
             }
         }
     }

@@ -23,7 +23,7 @@ namespace it.valuelab.hedgeinvest.KIID
         static void Main()
         {
 
-            s.KIIDService service = new s.KIIDService(@"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\TEMPLATE\HI Core IT.docx", @"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\INPUT\DATIKIID.XLSX",
+            s.KIIDService service = new s.KIIDService(@"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\TEMPLATE\HICU_IT.docx", @"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\INPUT\DATIKIID.XLSX",
                     @"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\OUT","it-IT_IT", DateTime.Now);
 
             Log.Debug("Inizio creazione documenti KIID");

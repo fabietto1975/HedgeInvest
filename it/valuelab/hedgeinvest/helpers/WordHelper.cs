@@ -106,30 +106,12 @@ namespace it.valuelab.hedgeinvest.helpers
                 }
 
             }
-            /*
-            using (StreamReader sr = new StreamReader(Document.MainDocumentPart.GetStream()))
-            {
-                docText = sr.ReadToEnd();
-            }
-
-            Regex regexText = new Regex(oldtext);
-            newtext = formattaTesto(newtext);
-            docText = regexText.Replace(docText, newtext);
-            */
             using (StreamWriter sw = new StreamWriter(Document.MainDocumentPart.GetStream(FileMode.Create)))
             {
                 sw.Write(docText);
             }
         }
-        private string formattaTesto(string newtext)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("<w:t>");
-            sb.Append(newtext.Replace("\n","<w:br/>"));
-            sb.Append("</w:t>");
 
-            return sb.ToString();
-        }
 
         public void SaveAsPDF()
         {

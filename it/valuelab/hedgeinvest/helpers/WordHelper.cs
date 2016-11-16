@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using wp = DocumentFormat.OpenXml.Wordprocessing;
 namespace it.valuelab.hedgeinvest.helpers
 {
     class WordHelper : IDisposable
@@ -49,21 +49,57 @@ namespace it.valuelab.hedgeinvest.helpers
 
                 } else
                 {
-                    Log.Debug(newtext);
-                    //Gestione elenchi puntati
+                    /*
+                    Run currentRun = (Run) item.Parent;
+                    currentRun.RemoveAllChildren<Text>();
+                    */
+
+                    wp.Paragraph currentParagraph = (wp.Paragraph) item.Parent.Parent;
+                    Run currentRun = (Run)item.Parent;
+                    currentRun.RemoveAllChildren<Text>();
+                    
+                    //Gestione a capo
                     string[] splitted = newtext.Split('\n');
-                    Log.Debug(splitted.Length);
                     if (splitted.Length > 1)
                     {
                         item.Text = splitted[0];
                         Text currentTextBlock = item;
+                        /*
+                        Text newTextBlock = new Text(splitted[0]);
+                        currentRun.Append(newTextBlock);
+                        */
+
+                        Text newTextBlock = new Text(splitted[0]);
+                        currentRun.Append(newTextBlock);
                         for (int idx = 1; idx < splitted.Length; idx++)
                         {
-                            DocumentFormat.OpenXml.Wordprocessing.Break b = new DocumentFormat.OpenXml.Wordprocessing.Break();
+
+                            Run newRun = new Run();
+                            newRun.RunProperties = (RunProperties)currentRun.RunProperties.CloneNode(true);
+                            newTextBlock = new Text(splitted[idx]);
+                            newRun.Append(newTextBlock);
+                            currentRun = newRun;
+                            wp.Paragraph newParagraph = new wp.Paragraph(newRun);
+                            newParagraph.ParagraphProperties = (ParagraphProperties)currentParagraph.ParagraphProperties.CloneNode(true);
+                            currentParagraph.InsertAfterSelf(newParagraph);
+                            currentParagraph = newParagraph;
+                            /*
+                            wp.Break b = new wp.Break();
                             currentTextBlock.InsertAfterSelf(b);
                             Text newTextBlock = new Text(splitted[idx]);
                             b.InsertAfterSelf(newTextBlock);
                             currentTextBlock = newTextBlock;
+                            */
+
+                            /*
+                            Run newRun = new Run();
+                            newRun.RunProperties = (RunProperties) currentRun.RunProperties.CloneNode(true);
+                            newTextBlock = new Text(splitted[idx]);
+                            newRun.AppendChild(newTextBlock);
+                            currentRun.InsertAfterSelf(newRun);
+                            newTextBlock.InsertAfterSelf(new DocumentFormat.OpenXml.Wordprocessing.Break());
+                            currentRun = newRun;
+                            */
                         }
 
                     }

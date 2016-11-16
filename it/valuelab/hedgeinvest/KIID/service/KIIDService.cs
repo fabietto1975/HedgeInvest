@@ -161,21 +161,21 @@ namespace it.valuelab.hedgeinvest.KIID.service
             Log.Info("Inizio generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName );
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
-                wordHelper.replaceText("@CLASSE@", data.Classe);
-                wordHelper.replaceText("@ISIN@", data.Isin);
-                wordHelper.replaceText("@TESTO1@", data.Testo1, "FORMATTED");
-                wordHelper.replaceText("@TESTO2@", data.Testo2);
-                wordHelper.replaceText("@TESTO3@", data.Testo3);
-                wordHelper.replaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
-                wordHelper.replaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0}%", data.SpeseSottoscrizione));
-                wordHelper.replaceText("@SPESEDIRIMBORSO@", string.Format("{0}%", data.SpeseDiRimborso));
-                wordHelper.replaceText("@SPESEDICONVERSIONE@", string.Format("{0}%", data.SpeseDiConversione));
-                wordHelper.replaceText("@SPESECORRENTI@", string.Format("{0}%", data.SpeseCorrenti));
-                wordHelper.replaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
-                wordHelper.replaceText("@DATAGENERAZIONE@", data.DataGenerazione);
-                wordHelper.replaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
+                wordHelper.ReplaceText("@CLASSE@", data.Classe);
+                wordHelper.ReplaceText("@ISIN@", data.Isin);
+                wordHelper.ReplaceText("@TESTO1@", data.Testo1, "FORMATTED");
+                wordHelper.ReplaceText("@CLASSEDIRISCHIO@", data.ClasseDiRischio);
+                wordHelper.ReplaceText("@SPESEDISOTTOSCRIZIONE@", string.Format("{0}%", data.SpeseSottoscrizione));
+                wordHelper.ReplaceText("@SPESEDIRIMBORSO@", string.Format("{0}%", data.SpeseDiRimborso));
+                wordHelper.ReplaceText("@SPESEDICONVERSIONE@", string.Format("{0}%", data.SpeseDiConversione));
+                wordHelper.ReplaceText("@SPESECORRENTI@", string.Format("{0}%", data.SpeseCorrenti));
+                wordHelper.ReplaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
+                wordHelper.ReplaceText("@DATAGENERAZIONE@", data.DataGenerazione);
+                wordHelper.ReplaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceChart(data.Performances);
+                wordHelper.ReplaceText("@TESTO2@", data.Testo2);
+                wordHelper.ReplaceText("@TESTO3@", data.Testo3);
             }
             using (WordHelper wordHelper = new WordHelper(outputFileName))
             {

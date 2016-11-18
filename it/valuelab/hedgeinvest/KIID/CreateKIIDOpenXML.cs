@@ -27,11 +27,7 @@ namespace it.valuelab.hedgeinvest.KIID
                     @"D:\LAVORO\PROGETTI\HEDGEINVEST\KIID\OUT","it-IT_IT", DateTime.Now);
 
             Log.Debug("Inizio creazione documenti KIID");
-            List<m.KIIDData> kiidDataList = service.readFundsData();
-            foreach (m.KIIDData kiiddata in kiidDataList)
-            {
-                service.generateOutput(kiiddata);
-            }
+            service.GenerateKIID();
             Log.Info("Creazione documenti KIID terminata");
 
 

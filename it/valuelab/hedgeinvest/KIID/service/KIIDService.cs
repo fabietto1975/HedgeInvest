@@ -29,12 +29,21 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
         private int TotNumeroDocumenti = 0;
         private int CurrentNumeroDocumenti = 0;
+
         private double _progress;
         public double progress
         {
             get { return _progress; }
             set { _progress = value; }
         }
+        private string _error;
+        public string error
+        {
+            get { return _error; }
+            set { _error = value; }
+        }
+
+
 
         public KIIDService(string _template, string _datafile, string _outputfolder, string _language, DateTime _datagenerazione)
         {
@@ -48,7 +57,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             cultureInfo = new CultureInfo(language);
         }
 
-        public List<m.KIIDData> readFundsData()
+        private List<m.KIIDData> ReadFundsData()
 
         {
             const string mainSheetname = "DATI KIID";
@@ -152,7 +161,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             return result;
         }
 
-        public void generateOutput(m.KIIDData data)
+        private void GenerateOutput(m.KIIDData data)
         {
             //Nome file--> nome fondo desunto dal template
             string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
@@ -185,16 +194,35 @@ namespace it.valuelab.hedgeinvest.KIID.service
 
             CurrentNumeroDocumenti++;
             progress = (double)CurrentNumeroDocumenti / TotNumeroDocumenti;
-            NotifyPropertyChanged();
+            NotifyPropertyChanged("progress");
 
         }
 
 
-        private void NotifyPropertyChanged()
+        public void GenerateKIID()
+        {
+            try
+            {
+                List<m.KIIDData> kiidDataList = this.ReadFundsData();
+                foreach (m.KIIDData kiiddata in kiidDataList)
+                {
+                    this.GenerateOutput(kiiddata);
+                }
+
+            }
+            catch (Exception e)
+            {
+                NotifyPropertyChanged("error");
+                error = "Errore generale nell'esecuzione della procedura: " + e.Message;
+            }
+
+        }
+
+        private void NotifyPropertyChanged(string property)
         {
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("progress"));
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
 

@@ -60,15 +60,18 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private List<m.KIIDData> ReadFundsData()
 
         {
+            Log.Info("Inizio generazione documenti ");
             const string mainSheetname = "DATI KIID";
             const string performanceSheetname = "PERFORMANCE";
             const int MAX_EMPTY_ROWS = 3;
             List<m.KIIDData> result = new List<m.KIIDData>();
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
+            Log.Info("Inizio lettura dati input");
             using (ExcelHelper excelHelper = new ExcelHelper(datafile))
             {
-                
+
                 //Performance
+                Log.Info("Inizio lettura dati input - Performance");
 
                 int row = 2;
                 Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
@@ -104,12 +107,17 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     }
                     row++;
                     isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
+
                 }
+                Log.Info("Termine lettura dati input - Performance");
+                Log.Info("Inizio lettura dati input - Dati fondi");
+
                 string suffix = "";
                 if (!language.Equals("it-IT"))
                 {
                     suffix += " - " + language.Split('-')[1];
                 }
+                Log.Info("Dati fondi: suffisso " + suffix);
                 Dictionary<string, string> fieldPosition = new Dictionary<String, string>();
                 //Header row
                 string classeCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "CLASSE", 1));
@@ -124,7 +132,12 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo ); 
+                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo );
+                Log.Debug("testo1Col  " + testo1Col);
+                Log.Debug("testo2Col  " + testo2Col);
+                Log.Debug("testo3Col  " + testo3Col);
+                Log.Debug("commissioniRendimentoCol  " + commissioniRendimentoCol);
+                Log.Debug("informazionipraticheCol  " + informazionipraticheCol);
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -155,7 +168,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
                     
                 }
-                
+                Log.Info("Termine lettura dati input - Dati fondi");
+
             }
             TotNumeroDocumenti = result.Count();
             return result;
@@ -166,7 +180,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             //Nome file--> nome fondo desunto dal template
             string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
             
-            string outputFileName = outputfolder + "\\"  + "KIID_ " + templateName + "_" + data.Classe  + "_" + language.Split('-')[1]+ "_" + country + "_" + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + ".docx";
+            string outputFileName = outputfolder + "\\"  + "KIID_" + templateName + "_" + data.Classe  + "_" + language.Split('-')[1]+ "_" + country + "_" + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + ".docx";
             Log.Info("Inizio generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName );
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
@@ -206,14 +220,14 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 List<m.KIIDData> kiidDataList = this.ReadFundsData();
                 foreach (m.KIIDData kiiddata in kiidDataList)
                 {
-                    this.GenerateOutput(kiiddata);
+                    GenerateOutput(kiiddata);
                 }
 
             }
             catch (Exception e)
             {
                 NotifyPropertyChanged("error");
-                error = "Errore generale nell'esecuzione della procedura: " + e.Message;
+                error = "Errore nell'esecuzione della procedura: " + e.Message;
             }
 
         }

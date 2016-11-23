@@ -180,7 +180,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
             //Nome file--> nome fondo desunto dal template
             string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
             
-            string outputFileName = outputfolder + "\\"  + "KIID_" + templateName + "_" + data.Classe  + "_" + language.Split('-')[1]+ "_" + country + "_" + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + ".docx";
+            string outputFileName = outputfolder + "\\"  + "KIID_" + templateName + "_" + data.Classe  + "_" + data.Isin+ "_" + language.Split('-')[1]+ "_" + country + "_" + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + ".docx";
             Log.Info("Inizio generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName );
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {

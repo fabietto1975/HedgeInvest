@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 using System.Globalization;
 using System.IO;
 using DocumentFormat.OpenXml.Spreadsheet;
+using T = DocumentFormat.OpenXml.Wordprocessing.Table;
 
 namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 {
@@ -18,24 +19,19 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 
         public void InsertProfiloRischio(string profiloRischio)
         {
-            foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
+
+            T table = FindByCaption("TABELLACLASSEDIRISCHIO");
+
+            TableRow innerRow = table.Elements<TableRow>().ElementAt(0);
+
+            foreach (TableCell innerCell in innerRow.Elements<TableCell>())
             {
-                TableRow row = t.Elements<TableRow>().ElementAt(4); //Sezione "Profilo di rischio e di rendimento"
-                foreach (TableCell cell in row.Elements<TableCell>())
+                if (innerCell.InnerText==profiloRischio)
                 {
-                    foreach (DocumentFormat.OpenXml.Wordprocessing.Table innerTable in cell.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
-                    {
-                        TableRow innerRow = innerTable.Elements<TableRow>().ElementAt(0);
-                        foreach (TableCell innerCell in innerRow.Elements<TableCell>())
-                        {
-                            if (innerCell.InnerText.Equals(profiloRischio))
-                            {
-                                innerCell.TableCellProperties.Shading.Fill = "CC9900";
-                            }
-                        }
-                    }
+                    innerCell.TableCellProperties.Shading.Fill = "CC9900";
                 }
             }
+
         }
 
 

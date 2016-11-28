@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using wp = DocumentFormat.OpenXml.Wordprocessing;
+using System.Runtime.Serialization;
+
 namespace it.valuelab.hedgeinvest.helpers
 {
     class WordHelper : IDisposable
@@ -35,6 +37,26 @@ namespace it.valuelab.hedgeinvest.helpers
             _filename = filename;
             _outName = outName;
         }
+
+        public DocumentFormat.OpenXml.Wordprocessing.Table FindByCaption(string caption)
+        {
+
+            Body body = _document.MainDocumentPart.Document.Body;
+            IEnumerable<TableProperties> tableProperties = body.Descendants<TableProperties>().Where(tp => tp.TableCaption != null);
+
+            foreach (TableProperties tProp in tableProperties)
+            {
+                if (tProp.TableCaption.Val==caption) // see comment, this is actually StringValue
+                {
+                    // do something for table with myCaption
+                    DocumentFormat.OpenXml.Wordprocessing.Table table = (DocumentFormat.OpenXml.Wordprocessing.Table)tProp.Parent;
+                    return table;
+                }
+            }
+            throw new TableNotFoundException("Impossible trovare la tabella con caption " + caption); 
+
+        }
+
 
 
         public void RemoveRowByContent(string texttofind)
@@ -177,6 +199,26 @@ namespace it.valuelab.hedgeinvest.helpers
         public void Dispose()
         {
             Document.Dispose();
+        }
+
+        [Serializable]
+        private class TableNotFoundException : Exception
+        {
+            public TableNotFoundException()
+            {
+            }
+
+            public TableNotFoundException(string message) : base(message)
+            {
+            }
+
+            public TableNotFoundException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected TableNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
         }
     }
 }

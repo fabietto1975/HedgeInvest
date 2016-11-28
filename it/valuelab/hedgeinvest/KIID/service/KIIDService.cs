@@ -131,13 +131,13 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesecorrentiCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE CORRENTI", 1));
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
-                string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
+                //string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
                 string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo );
                 Log.Debug("testo1Col  " + testo1Col);
                 Log.Debug("testo2Col  " + testo2Col);
                 Log.Debug("testo3Col  " + testo3Col);
                 Log.Debug("commissioniRendimentoCol  " + commissioniRendimentoCol);
-                Log.Debug("informazionipraticheCol  " + informazionipraticheCol);
+                //Log.Debug("informazionipraticheCol  " + informazionipraticheCol);
                 //Dati Fondo
                 row = 3;
                 string classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
@@ -159,7 +159,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString())) * 100).ToString(),
                         (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString())) * 100).ToString(),
                         excelHelper.GetValue(mainSheetname, commissioniRendimentoCol, row.ToString()),
-                        excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
+                        "",//excelHelper.GetValue(mainSheetname, informazionipraticheCol, row.ToString()),
                         datagenerazioneStr,
                         performances
                         );
@@ -194,7 +194,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 wordHelper.ReplaceText("@SPESECORRENTI@", string.Format("{0}%", data.SpeseCorrenti));
                 wordHelper.ReplaceText("@COMMISSIONIRENDIMENTO@", data.CommissioniRendimento);
                 wordHelper.ReplaceText("@DATAGENERAZIONE@", data.DataGenerazione);
-                wordHelper.ReplaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
+                //wordHelper.ReplaceText("@INFORMAZIONIPRATICHE", data.InformazioniPratiche);
                 wordHelper.InsertProfiloRischio(data.ClasseDiRischio);
                 wordHelper.EditPerformanceChart(data.Performances);
                 wordHelper.ReplaceText("@TESTO2@", data.Testo2);

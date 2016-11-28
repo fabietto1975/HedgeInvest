@@ -115,7 +115,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string suffix = "";
                 if (!language.Equals("it-IT"))
                 {
-                    suffix += " - " + language.Split('-')[1];
+                    suffix += " - " + language.Split('-')[0].ToUpper(); 
                 }
                 Log.Info("Dati fondi: suffisso " + suffix);
                 Dictionary<string, string> fieldPosition = new Dictionary<String, string>();

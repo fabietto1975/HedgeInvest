@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace it.valuelab.hedgeinvest.helpers
 {
@@ -51,8 +52,14 @@ namespace it.valuelab.hedgeinvest.helpers
             Cell result = row.Elements<Cell>().Where(
                 c =>  content.Equals(GetCellText(c))
                 ).FirstOrDefault();
+            if (result == null)
+            {
+                throw new CellNotFoundException("Impossibile trovare la cella " + content);
+            }
             return result;
         }
+
+        
 
         public string GetCellColumn(Cell c)
         {
@@ -89,6 +96,26 @@ namespace it.valuelab.hedgeinvest.helpers
         public void Dispose()
         {
             excelData.Dispose();
+        }
+
+        [Serializable]
+        private class CellNotFoundException : Exception
+        {
+            public CellNotFoundException()
+            {
+            }
+
+            public CellNotFoundException(string message) : base(message)
+            {
+            }
+
+            public CellNotFoundException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected CellNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
         }
     }
 

@@ -58,7 +58,6 @@ namespace it.valuelab.hedgeinvest.KIID.service
         }
 
         private List<m.KIIDData> ReadFundsData()
-
         {
             Log.Info("Inizio generazione documenti ");
             const string mainSheetname = "DATI KIID";
@@ -74,13 +73,13 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 Log.Info("Inizio lettura dati input - Performance");
 
                 int row = 2;
-                Dictionary<string, SortedDictionary<string,string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>() ;
+                Dictionary<string, SortedDictionary<string, string>> isinPerformanceAnnoMap = new Dictionary<string, SortedDictionary<string, string>>();
                 string isin = excelHelper.GetValue(performanceSheetname, "B", row.ToString());
                 int emptyRows = 0;
 
-                while (emptyRows<= MAX_EMPTY_ROWS)
+                while (emptyRows <= MAX_EMPTY_ROWS)
                 {
-                    string anno= "0", dato = "0";
+                    string anno = "0", dato = "0";
                     if (string.IsNullOrEmpty(isin))
                     {
                         emptyRows++;
@@ -93,9 +92,10 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         if (string.IsNullOrEmpty(dato))
                         {
                             dato = "0";
-                        } else
+                        }
+                        else
                         {
-                            dato = (Convert.ToDouble(dato)/100) .ToString();
+                            dato = (Convert.ToDouble(dato) / 100).ToString();
                         }
                         SortedDictionary<string, string> isinPerformanceAnno;
                         if (!isinPerformanceAnnoMap.TryGetValue(isin, out isinPerformanceAnno))
@@ -115,7 +115,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string suffix = "";
                 if (!language.Equals("it-IT"))
                 {
-                    suffix += " - " + language.Split('-')[0].ToUpper(); 
+                    suffix += " - " + language.Split('-')[0].ToUpper();
                 }
                 Log.Info("Dati fondi: suffisso " + suffix);
                 Dictionary<string, string> fieldPosition = new Dictionary<String, string>();
@@ -132,7 +132,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 string spesediconversioneCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "SPESE DI CONVERSIONE", 1));
                 string commissioniRendimentoCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "COMMISSIONI LEGATE AL RENDIMENTO" + suffix, 1));
                 //string informazionipraticheCol = excelHelper.GetCellColumn(excelHelper.GetCellByContent(mainSheetname, "INFORMAZIONI PRATICHE" + suffix, 1));
-                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo );
+                string datagenerazioneStr = datagenerazione.ToString("dd MMMM yyyy", cultureInfo);
                 Log.Debug("testo1Col  " + testo1Col);
                 Log.Debug("testo2Col  " + testo2Col);
                 Log.Debug("testo3Col  " + testo3Col);
@@ -144,9 +144,9 @@ namespace it.valuelab.hedgeinvest.KIID.service
                 while (!string.IsNullOrEmpty(classe))
                 {
                     string currentIsin = excelHelper.GetValue(mainSheetname, isinCol, row.ToString());
-                    SortedDictionary<string,string> performances = new SortedDictionary<string, string>();
+                    SortedDictionary<string, string> performances = new SortedDictionary<string, string>();
                     isinPerformanceAnnoMap.TryGetValue(currentIsin, out performances);
-                    
+
                     m.KIIDData item = new m.KIIDData(
                         classe,
                         currentIsin,
@@ -154,7 +154,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         excelHelper.GetValue(mainSheetname, testo1Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo2Col, row.ToString()),
                         excelHelper.GetValue(mainSheetname, testo3Col, row.ToString()),
-                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString()))*100).ToString(),
+                        (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesesottoscrizioneCol, row.ToString())) * 100).ToString(),
                         (Convert.ToDouble(excelHelper.GetValue(mainSheetname, speserimborsoCol, row.ToString())) * 100).ToString(),
                         (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesecorrentiCol, row.ToString())) * 100).ToString(),
                         (Convert.ToDouble(excelHelper.GetValue(mainSheetname, spesediconversioneCol, row.ToString())) * 100).ToString(),
@@ -166,7 +166,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                     result.Add(item);
                     row++;
                     classe = excelHelper.GetValue(mainSheetname, classeCol, row.ToString());
-                    
+
                 }
                 Log.Info("Termine lettura dati input - Dati fondi");
 
@@ -178,10 +178,8 @@ namespace it.valuelab.hedgeinvest.KIID.service
         private void GenerateOutput(m.KIIDData data)
         {
             //Nome file--> nome fondo desunto dal template
-            string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
-            
-            string outputFileName = outputfolder + "\\"  + "KIID_" + templateName + "_" + data.Classe  + "_" + data.Isin+ "_" + language.Split('-')[1]+ "_" + country + "_" + datagenerazione.ToString("dd MM yyyy", CultureInfo.InvariantCulture) + ".docx";
-            Log.Info("Inizio generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName );
+            string outputFileName = CreaNomeFile(data);
+            Log.Info("Inizio generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName);
             using (KIIDWordHelper wordHelper = new KIIDWordHelper(template, outputFileName))
             {
                 wordHelper.ReplaceText("@CLASSE@", data.Classe);
@@ -204,12 +202,34 @@ namespace it.valuelab.hedgeinvest.KIID.service
             {
                 wordHelper.SaveAsPDF();
             }
-            Log.Info("Generazione documento " + (CurrentNumeroDocumenti+1) + " di " + TotNumeroDocumenti + " " + outputFileName + " terminata");
+            Log.Info("Generazione documento " + (CurrentNumeroDocumenti + 1) + " di " + TotNumeroDocumenti + " " + outputFileName + " terminata");
 
             CurrentNumeroDocumenti++;
             progress = (double)CurrentNumeroDocumenti / TotNumeroDocumenti;
             NotifyPropertyChanged("progress");
 
+        }
+
+        private string CreaNomeFile(m.KIIDData data)
+        {
+            string templateName = template.Split('\\').LastOrDefault().Split('.').ElementAt(0);
+            templateName = templateName.Split('_').FirstOrDefault();
+            StringBuilder sb = new StringBuilder();
+            sb.Append(outputfolder);
+            sb.Append("\\KIID_");
+            sb.Append(templateName);
+            sb.Append("_");
+            sb.Append(data.Classe);
+            sb.Append("_");
+            sb.Append(data.Isin);
+            sb.Append("_");
+            sb.Append(language.Split('-')[0]);
+            sb.Append("_");
+            sb.Append(country);
+            sb.Append("_");
+            sb.Append(datagenerazione.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture));
+            sb.Append(".docx");
+            return sb.ToString();
         }
 
 

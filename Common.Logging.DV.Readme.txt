@@ -1,2 +1,0 @@
-These features have now been merged into the main branch of Common.Logging, version 3.0,
-therefore this package is now redundant - you can use the Common.Logging package instead.

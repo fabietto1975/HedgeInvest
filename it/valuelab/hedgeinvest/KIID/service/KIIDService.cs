@@ -49,7 +49,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
         {
             template = _template;
             datafile = _datafile;
-            outputfolder = _outputfolder;
+            outputfolder = "D:\\temp\\kiid";
             datagenerazione = _datagenerazione;
             string[] splitLanguage = _language.Split('_');
             language = splitLanguage[0];
@@ -92,8 +92,7 @@ namespace it.valuelab.hedgeinvest.KIID.service
                         if (string.IsNullOrEmpty(dato))
                         {
                             dato = "0";
-                        }
-                        else
+                        } else
                         {
                             dato = (Convert.ToDouble(dato) / 100).ToString();
                         }

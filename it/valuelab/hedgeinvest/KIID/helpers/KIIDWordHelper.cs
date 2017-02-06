@@ -51,6 +51,7 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
         {
             int idx = data.Count;
 
+
             ChartPart cp = Document.MainDocumentPart.ChartParts.FirstOrDefault();
             Chart chart = cp.ChartSpace.Elements<Chart>().FirstOrDefault();
             BarChart barchart = chart.PlotArea.Elements<BarChart>().FirstOrDefault();
@@ -62,8 +63,10 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
 
             NumberReference nref = new NumberReference();
             string formula = baseFormula + (idx + 1);
+
             DocumentFormat.OpenXml.Drawing.Charts.Formula f = new DocumentFormat.OpenXml.Drawing.Charts.Formula();
             f.Text = formula;
+            Log.Info(formula);
             nref.Formula = f;
             NumberingCache nc = new NumberingCache();//nref.Descendants<NumberingCache>().First();
             nc.PointCount = new PointCount();
@@ -80,8 +83,16 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                 }
                 else if ("VALUES".Equals(mode))
                 {
-                    float valuePerc = float.Parse(val, CultureInfo.InvariantCulture.NumberFormat) * 100;
-                    value.Text = valuePerc.ToString(CultureInfo.InvariantCulture);
+                    if (val != "0")
+                    {
+                        float valuePerc = float.Parse(val, CultureInfo.InvariantCulture.NumberFormat) * 100;
+                        value.Text = valuePerc.ToString(CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        value.Text = "";
+
+                    }
                 }
                 point.AppendChild(value);
                 nc.AppendChild(point);
@@ -106,13 +117,6 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
         {
             if (performances != null)
             {
-                /*
-                foreach (DocumentFormat.OpenXml.Wordprocessing.Table t in Document.MainDocumentPart.Document.Body.Elements<DocumentFormat.OpenXml.Wordprocessing.Table>())
-                {
-                    TableRow row = t.Elements<TableRow>().ElementAt(10);
-                    row.Remove();
-                }
-                */
                 this.RemoveRowByContent("@TESTO2@");
 
 
@@ -140,47 +144,60 @@ namespace KIID.it.valuelab.hedgeinvest.KIID.helpers
                                     .FirstOrDefault()
                                     .OpenXmlPart;
                         SheetData sd = wsp.Worksheet.Elements<SheetData>().FirstOrDefault();
-                        //System.Diagnostics.Debug.WriteLine(sd.InnerXml);
-                        //System.Diagnostics.Debug.WriteLine(mainRow.InnerXml);
-                        //sd.RemoveAllChildren<Row>();
-                        //mainRow.RemoveAllChildren();
-                        int rowCount = sd.Elements<Row>().Count();
-                        //System.Diagnostics.Debug.WriteLine(rowCount);
-                        for (int idx = 0; idx < performances.Count; idx++)
+
+                        int cnt = 0;
+                        //Cosi facendo ci si limita al numero di righe predisposte dal template, max 5
+                        int rowCount = performances.Keys.Count();
+                        
+                        foreach (Row row in sd.Elements<Row>())
                         {
-                            Row row;
-                            Boolean append = false;
-                            if (idx + 1 < rowCount)
+                            Log.Debug("cnt: " + cnt);
+                            if (cnt > 0)
                             {
-                                row = sd.Elements<Row>().ElementAt((idx + 1));
-                            }
-                            else
-                            {
-                                row = new Row();
-                                append = true;
+                                string label = "";
+                                string value = "";
+                                if (cnt <= rowCount)
+                                {
+                                    label = performances.Keys.ElementAt((cnt - 1));
+                                    value = (float.Parse(performances[label], CultureInfo.InvariantCulture.NumberFormat) * 100).ToString(CultureInfo.InvariantCulture); 
+                                    if (value.Equals("0") || value.Equals("") || value == null)
+                                    {
+                                        value = "";
+                                    }
+
+                                }
+                                Log.Debug(label + " : " + (value==null));
+                                if (row.Elements<Cell>() != null && row.Elements<Cell>().Count() > 0)
+                                {
+                                    row.Elements<Cell>().ElementAt(0).Elements<CellValue>().FirstOrDefault().Text = label;
+                                    if (value != null)
+                                    {
+                                        Log.Debug("Imposto valore " + value);
+                                        row.Elements<Cell>().ElementAt(1).Elements<CellValue>().FirstOrDefault().Text = value;
+                                    }
+                                    Log.Debug("Cella esistente");
+                                }
+                                else
+                                {
+                                    Cell labelCell = new Cell();
+                                    labelCell.CellValue = new CellValue();
+                                    labelCell.CellValue.Text = label;
+                                    Cell valueCell = new Cell();
+                                    valueCell.CellValue = new CellValue();
+                                    if (value != null)
+                                    {
+                                        Log.Debug("Imposto valore " + value);
+                                        valueCell.CellValue.Text = value;
+                                    }
+                                    row.AppendChild<Cell>(labelCell);
+                                    row.AppendChild<Cell>(valueCell);
+                                    Log.Debug("Cella presente");
+                                }
 
                             }
-
-                            //new Row();
-                            string key = performances.Keys.ElementAt(idx);
-                            //Labels
-                            Cell labelCell = new Cell();
-                            labelCell.CellValue = new CellValue();
-                            labelCell.Elements<CellValue>().FirstOrDefault().Text = key;
-
-                            //Values
-                            Cell valueCell = new Cell();
-                            valueCell.CellValue = new CellValue();
-                            float valuePerc = float.Parse(performances[key], CultureInfo.InvariantCulture.NumberFormat) * 100;
-                            valueCell.Elements<CellValue>().FirstOrDefault().Text = valuePerc.ToString(CultureInfo.InvariantCulture);
-                            row.AppendChild(labelCell);
-                            row.Append(valueCell);
-
-                            if (append)
-                                sd.AppendChild(row);
+                            cnt++;
                         }
-
-
+                        Log.Debug(sd.InnerXml);
                     }
                     using (Stream s = epp.GetStream())
                         ms.WriteTo(s);

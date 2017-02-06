@@ -16,7 +16,7 @@ namespace it.valuelab.hedgeinvest.helpers
 {
     class WordHelper : IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger<WordHelper>();
+        protected static readonly ILog Log = LogManager.GetLogger<WordHelper>();
 
         protected string _filename;
         protected string _outName;
